@@ -23,9 +23,9 @@
           "BackoffRate": 2
         }
       ],
-      "Next": "Task_3"
+      "Next": "Task_2"
     },
-    "Task_3": {
+    "Task_2": {
       "Type": "Task",
       "Resource": "arn:aws:states:::lambda:invoke",
       "OutputPath": "$.Payload",
