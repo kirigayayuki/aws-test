@@ -35,4 +35,4 @@ phases:
       - echo $SFCurrentVersion
       - echo $SFTargetVersion
       - "aws stepfunctions update-state-machine-alias --state-machine-alias-arn arn:aws:states:ap-northeast-1:477460359712:stateMachine:2175051-test-MyStateMachine:prod --routing-configuration stateMachineVersionArn=arn:aws:states:ap-northeast-1:477460359712:stateMachine:2175051-test-MyStateMachine:$SFTargetVersion,weight=100"
-#      - "aws stepfunctions delete-state-machine --state-machine-arn arn:aws:states:ap-northeast-1:477460359712:stateMachine:2175051-test-MyStateMachine"
+      - "aws stepfunctions delete-state-machine-version --state-machine-version-arn arn:aws:states:ap-northeast-1:477460359712:stateMachine:2175051-test-MyStateMachine:$SFCurrentVersion"
