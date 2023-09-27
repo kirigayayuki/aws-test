@@ -1,23 +1,23 @@
 {
   "StartAt": "Start LambdaStatemachine",
   "States": {
-    "Start LambdaStatemachine": {
-      "Type": "Task",
-      "Resource": "arn:aws:states:::states:startExecution.sync:2",
-      "Parameters": {
-        "StateMachineArn": "arn:aws:states:ap-northeast-1:477460359712:stateMachine:2175051-test-MyStateMachine",
-        "Input": {
-          "StatePayload": "Hello from Step Functions!",
-          "AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$": "$$.Execution.Id"
-        }
-      },
-      "Next": "Start LowerStatemachine"
-    },
+#    "Start LambdaStatemachine": {
+#      "Type": "Task",
+#      "Resource": "arn:aws:states:::states:startExecution.sync:2",
+#      "Parameters": {
+#        "StateMachineArn": "arn:aws:states:ap-northeast-1:477460359712:stateMachine:2175051-test-MyStateMachine",
+#        "Input": {
+#          "StatePayload": "Hello from Step Functions!",
+#          "AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$": "$$.Execution.Id"
+#        }
+#      },
+#      "Next": "Start LowerStatemachine"
+#    },
     "Start LowerStatemachine": {
       "Type": "Task",
       "Resource": "arn:aws:states:::states:startExecution.sync",
       "Parameters": {
-        "StateMachineArn": "arn:aws:states:ap-northeast-1:XXXXXXXXXXXX:stateMachine:LowerStatemachine",
+        "StateMachineArn": "arn:aws:states:ap-northeast-1:477460359712:stateMachine:2175051-Lower-MyStateMachine",
         "Input": {
           "AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$": "$$.Execution.Id",
           "lower_flg.$": "$.lower_flg"
