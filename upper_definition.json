@@ -1,7 +1,7 @@
 {
-  "StartAt": "Start LambdaStatemachine",
+  "StartAt": "Start Lower1Statemachine",
   "States": {
-    "Start LambdaStatemachine": {
+    "Start Lower1Statemachine": {
       "Type": "Task",
       "Resource": "arn:aws:states:::states:startExecution.sync:2",
       "Parameters": {
@@ -11,9 +11,9 @@
           "AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$": "$$.Execution.Id"
         }
       },
-      "Next": "Start LowerStatemachine"
+      "Next": "Start Lower2Statemachine"
     },
-    "Start LowerStatemachine": {
+    "Start Lower2Statemachine": {
       "Type": "Task",
       "Resource": "arn:aws:states:::states:startExecution.sync",
       "Parameters": {
