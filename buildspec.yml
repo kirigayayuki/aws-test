@@ -11,13 +11,14 @@ phases:
     commands:
       - echo Build started on `date`
       - FUNC_LIST='lambda/func.lst'
-      - cat ${FUNC_LIST} | while read line ; do
-      - FUNC_NAME=`echo "${line}" | awk -F',' {'print $1'}`
-      - FUNC_FILE=`echo "${line}" | awk -F',' {'print $2'}`
-      - cd lambda/{$FUNC_FILE}
-      - zip -r lambda.zip ./*
-      - aws lambda update-function-code --function-name ${FUNC_NAME} --zip-file fileb://lambda.zip
-      - cd ../../
+      - |
+      - cat ${FUNC_LIST} | while read line
+      -   FUNC_NAME=`echo "${line}" | awk -F',' {'print $1'}`
+      -   FUNC_FILE=`echo "${line}" | awk -F',' {'print $2'}`
+      -   cd lambda/{$FUNC_FILE}
+      -   zip -r lambda.zip ./*
+      -   aws lambda update-function-code --function-name ${FUNC_NAME} --zip-file fileb://lambda.zip
+      -   cd ../../
       - done
 
       - SM_LIST='stepfunctions/statemachine.lst'
