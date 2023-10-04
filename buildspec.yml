@@ -9,6 +9,7 @@ phases:
       - echo No Pre Build phase
   build:
     commands:
+      - pwd
       - echo Build started on `date`
       - FUNC_NAME1="2175051-test-task1-lambda"
       - FUNC_NAME2="2175051-test-task2-lambda"
