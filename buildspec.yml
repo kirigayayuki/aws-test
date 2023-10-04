@@ -19,10 +19,9 @@ phases:
       - "SM_NAME1='arn:aws:states:ap-northeast-1:477460359712:stateMachine:2175051-test-MyStateMachine'"
       - "SM_NAME2='arn:aws:states:ap-northeast-1:477460359712:stateMachine:2175051-Lower-MyStateMachine'"
       - "SM_NAME3='arn:aws:states:ap-northeast-1:477460359712:stateMachine:2175051-Upper-MyStateMachine'"
-      - "SF_CURRENTVER1=$(echo $(aws stepfunctions describe-state-machine-alias --state-machine-alias-arn ${SM_NAME1}:prod | grep stateMachineVersionArn | tail -1 | cut -d : -f 9 | tr -cd 0-9))"
-      - "SF_CURRENTVER2=$(echo $(aws stepfunctions describe-state-machine-alias --state-machine-alias-arn ${SM_NAME2}:prod | grep stateMachineVersionArn | tail -1 | cut -d : -f 9 | tr -cd 0-9))"
-      - "SF_CURRENTVER3=$(echo $(aws stepfunctions describe-state-machine-alias --state-machine-alias-arn ${SM_NAME3}:prod | grep stateMachineVersionArn | tail -1 | cut -d : -f 9 | tr -cd 0-9))"
-      - echo "${SF_CURRENTVER1} , ${SF_CURRENTVER2} , ${SF_CURRENTVER3}"
+      - "SM_CURRENTVER1=$(echo $(aws stepfunctions describe-state-machine-alias --state-machine-alias-arn ${SM_NAME1}:prod | grep stateMachineVersionArn | tail -1 | cut -d : -f 9 | tr -cd 0-9))"
+      - "SM_CURRENTVER2=$(echo $(aws stepfunctions describe-state-machine-alias --state-machine-alias-arn ${SM_NAME2}:prod | grep stateMachineVersionArn | tail -1 | cut -d : -f 9 | tr -cd 0-9))"
+      - "SM_CURRENTVER3=$(echo $(aws stepfunctions describe-state-machine-alias --state-machine-alias-arn ${SM_NAME3}:prod | grep stateMachineVersionArn | tail -1 | cut -d : -f 9 | tr -cd 0-9))"
       - cd lambda/task1
       - zip -r lambda.zip ./*
       - aws lambda update-function-code --function-name ${FUNC_NAME1} --zip-file fileb://lambda.zip
