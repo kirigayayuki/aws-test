@@ -10,7 +10,7 @@ phases:
   build:
     commands:
       - echo Build started on `date`
-      - FUNC_LIST='lambda/func.lst'
+      - FUNC_LIST='func.lst'
       - |
         cat ${FUNC_LIST} | while read line
         do
@@ -22,7 +22,7 @@ phases:
           cd ../../
         done
 
-      - SM_LIST='stepfunctions/statemachine.lst'
+      - SM_LIST='statemachine.lst'
       - |
         cat ${SM_LIST} | while read line
         do
