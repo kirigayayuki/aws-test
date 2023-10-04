@@ -19,6 +19,10 @@ phases:
           cd lambda/${FUNC_FILE}
           zip -r lambda.zip ./*
           aws lambda update-function-code --function-name ${FUNC_NAME} --zip-file fileb://lambda.zip
+          if [$? ne 0]; then
+            echo "Lambda Deploy Error. FunctionName=${FUNC_NAME}."
+            break
+          fi
           cd ../../
         done
 
@@ -29,6 +33,10 @@ phases:
           SM_NAME=`echo "${line}" | awk -F',' {'print $1'}`
           SM_FILE=`echo "${line}" | awk -F',' {'print $2'}`
           "aws stepfunctions update-state-machine --state-machine-arn ${SM_NAME} --definition file://stepfunctions/${SM_FILE}"
+          if [$? ne 0]; then
+            echo "StepFunctions Deploy Error. StateMachineName=${SM_NAME}."
+            break
+          fi
         done
       - sleep 10
   post_build:
@@ -44,6 +52,10 @@ phases:
           FUNC_TARGETVER=$(echo $(aws lambda list-versions-by-function --function-name ${FUNC_NAME} | grep Version | tail -1 | tr -cd 0-9))
           echo "current ver.${FUNC_CURRENTVER} >> target ver.${FUNC_TARGETVER}"
           aws lambda update-alias --function-name ${FUNC_NAME} --name prod --function-version ${FUNC_TARGETVER}
+          if [$? ne 0]; then
+            echo "Lambda Deploy Error. FunctionName=${FUNC_NAME}."
+            break
+          fi
         done
 
       - |
@@ -55,4 +67,8 @@ phases:
           "SM_TARGETVER1=$(echo $(aws stepfunctions list-state-machine-versions --state-machine-arn ${SM_NAME} | grep stateMachineVersionArn | head -1 | cut -d : -f 9 | tr -cd 0-9))"
           echo "current ver.${SM_CURRENTVER} >> target ver.${SM_TARGETVER}"
           "aws stepfunctions update-state-machine-alias --state-machine-alias-arn ${SM_NAME}:prod --routing-configuration stateMachineVersionArn=${SM_NAME}:${SM_TARGETVER},weight=100"
+          if [$? ne 0]; then
+            echo "StepFunctions Deploy Error. StateMachineName=${SM_NAME}."
+            break
+          fi
         done
