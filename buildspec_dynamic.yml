@@ -1,0 +1,76 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo No Install phase
+  pre_build:
+    commands:
+      - echo No Pre Build phase
+  build:
+    on-failure: ABORT
+    commands:
+      - echo Build started on `date`
+      - FUNC_LIST='func.lst'
+      - |
+        cat ${FUNC_LIST} | while read line
+        do
+          FUNC_NAME=`echo "${line}" | awk -F',' {'print $1'}`
+          FUNC_FILE=`echo "${line}" | awk -F',' {'print $2'}`
+          cd lambda/${FUNC_FILE}
+          zip -r lambda.zip ./*
+          aws lambda update-function-code --function-name ${FUNC_NAME} --zip-file fileb://lambda.zip
+          if [$? ne 0]; then
+            echo "Lambda Deploy Error. FunctionName=${FUNC_NAME}."
+            exit 255
+          fi
+          cd ../../
+        done
+
+      - SM_LIST='statemachine.lst'
+      - |
+        cat ${SM_LIST} | while read line
+        do
+          SM_NAME=`echo "${line}" | awk -F',' {'print $1'}`
+          SM_FILE=`echo "${line}" | awk -F',' {'print $2'}`
+          "aws stepfunctions update-state-machine --state-machine-arn ${SM_NAME} --definition file://stepfunctions/${SM_FILE}"
+          if [$? ne 0]; then
+            echo "StepFunctions Deploy Error. StateMachineName=${SM_NAME}."
+            exit 255
+          fi
+        done
+      - sleep 10
+  post_build:
+    on-failure: ABORT
+    commands:
+      - echo Build completed on `date`
+      - ls
+      - |
+        cat ${FUNC_LIST} | while read line
+        do
+          FUNC_NAME=`echo "${line}" | awk -F',' {'print $1'}`
+          FUNC_CURRENTVER=$(echo $(aws lambda get-alias --function-name ${FUNC_NAME} --name prod | grep FunctionVersion | tail -1 |tr -cd 0-9))
+          aws lambda publish-version --function-name ${FUNC_NAME} --description "update version"
+          FUNC_TARGETVER=$(echo $(aws lambda list-versions-by-function --function-name ${FUNC_NAME} | grep Version | tail -1 | tr -cd 0-9))
+          echo "current ver.${FUNC_CURRENTVER} >> target ver.${FUNC_TARGETVER}"
+          aws lambda update-alias --function-name ${FUNC_NAME} --name prod --function-version ${FUNC_TARGETVER}
+          if [$? ne 0]; then
+            echo "Lambda Deploy Error. FunctionName=${FUNC_NAME}."
+            exit 255
+          fi
+        done
+
+      - |
+        cat ${SM_LIST} | while read line
+        do
+          SM_NAME=`echo "${line}" | awk -F',' {'print $1'}`
+          "SM_CURRENTVER=$(echo $(aws stepfunctions describe-state-machine-alias --state-machine-alias-arn ${SM_NAME}:prod | grep stateMachineVersionArn | tail -1 | cut -d : -f 9 | tr -cd 0-9))"
+          "aws stepfunctions publish-state-machine-version --state-machine-arn ${SM_NAME} --description 'update version'"
+          "SM_TARGETVER1=$(echo $(aws stepfunctions list-state-machine-versions --state-machine-arn ${SM_NAME} | grep stateMachineVersionArn | head -1 | cut -d : -f 9 | tr -cd 0-9))"
+          echo "current ver.${SM_CURRENTVER} >> target ver.${SM_TARGETVER}"
+          "aws stepfunctions update-state-machine-alias --state-machine-alias-arn ${SM_NAME}:prod --routing-configuration stateMachineVersionArn=${SM_NAME}:${SM_TARGETVER},weight=100"
+          if [$? ne 0]; then
+            echo "StepFunctions Deploy Error. StateMachineName=${SM_NAME}."
+            exit 255
+          fi
+        done
