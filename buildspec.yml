@@ -8,6 +8,7 @@ phases:
     commands:
       - echo No Pre Build phase
   build:
+    on-failure: ABORT
     commands:
       - echo Build started on `date`
       - FUNC_LIST='func.lst'
@@ -40,6 +41,7 @@ phases:
         done
       - sleep 10
   post_build:
+    on-failure: ABORT
     commands:
       - echo Build completed on `date`
       - ls
