@@ -10,7 +10,8 @@ do
   cd lambda/${FUNC_FILE}
   zip -r lambda.zip ./*
   aws lambda update-function-code --function-name ${FUNC_NAME} --zip-file fileb://lambda.zip
-  if [$? -ne 0]; then
+  echo "$?"
+  if [ $? -ne 0 ]; then
     echo "Lambda Deploy Error. FunctionName=${FUNC_NAME}."
     exit 255
   fi
