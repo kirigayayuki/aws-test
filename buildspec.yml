@@ -19,8 +19,3 @@ phases:
       - echo Build completed on `date`
       - ls
       - sh lambda_alias.sh
-      - echo "$?"
-      - |
-        if [ $? -ne 0 ]; then
-          exit 2
-        fi

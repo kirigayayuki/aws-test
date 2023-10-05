@@ -12,11 +12,6 @@ phases:
     commands:
       - echo Build started on `date`
       - sh stepfunctions_deploy.sh
-      - echo "$?"
-      - |
-        if [ $? -ne 0 ]; then
-          exit 2
-        fi
       - sleep 10
   post_build:
     on-failure: ABORT
@@ -24,8 +19,3 @@ phases:
       - echo Build completed on `date`
       - ls
       - sh stepfunctions_alias.sh
-      - echo "$?"
-      - |
-        if [ $? -ne 0 ]; then
-          exit 2
-        fi
