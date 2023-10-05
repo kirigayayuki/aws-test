@@ -13,7 +13,7 @@ do
   echo "$?"
   if [ $? -ne 0 ]; then
     echo "Lambda Deploy Error. FunctionName=${FUNC_NAME}."
-    exit 255
+    break
   fi
   cd ../../
 done
