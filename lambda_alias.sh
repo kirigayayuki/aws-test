@@ -12,6 +12,6 @@ do
   aws lambda update-alias --function-name ${FUNC_NAME} --name prod --function-version ${FUNC_TARGETVER}
   if [ $? -ne 0 ]; then
     echo "Lambda Deploy Error. FunctionName=${FUNC_NAME}."
-    exit 255
+    break
   fi
 done

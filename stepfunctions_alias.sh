@@ -12,6 +12,6 @@ do
   "aws stepfunctions update-state-machine-alias --state-machine-alias-arn ${SM_NAME}:prod --routing-configuration stateMachineVersionArn=${SM_NAME}:${SM_TARGETVER},weight=100"
   if [ $? -ne 0 ]; then
     echo "StepFunctions Deploy Error. StateMachineName=${SM_NAME}."
-    exit 255
+    break
   fi
 done

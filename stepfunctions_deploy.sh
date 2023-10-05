@@ -9,6 +9,6 @@ do
   "aws stepfunctions update-state-machine --state-machine-arn ${SM_NAME} --definition file://stepfunctions/${SM_FILE}"
   if [ $? -ne 0 ]; then
     echo "StepFunctions Deploy Error. StateMachineName=${SM_NAME}."
-    exit 255
+    break
   fi
 done
