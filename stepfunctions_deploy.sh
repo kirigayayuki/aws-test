@@ -8,6 +8,7 @@ do
   SM_FILE=`echo "${line}" | awk -F',' {'print $2'}`
   echo "${SM_NAME} , ${SM_FILE}"
   cd stepfunctions
+  pwd
   "aws stepfunctions update-state-machine --state-machine-arn ${SM_NAME} --definition file://${SM_FILE}"
   if [ $? -ne 0 ]; then
     echo "StepFunctions Deploy Error. StateMachineName=${SM_NAME}."
