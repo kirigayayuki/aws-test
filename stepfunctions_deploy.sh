@@ -10,7 +10,7 @@ do
   cd stepfunctions
   pwd
   ls -l ${SM_FILE}
-  "aws stepfunctions update-state-machine --state-machine-arn ${SM_NAME} --definition file://${SM_FILE}"
+  aws stepfunctions update-state-machine --state-machine-arn ${SM_NAME} --definition file://${SM_FILE}
   if [ $? -ne 0 ]; then
     echo "StepFunctions Deploy Error. StateMachineName=${SM_NAME}."
     exit 2
