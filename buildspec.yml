@@ -18,3 +18,4 @@ phases:
     commands:
       - echo Build completed on `date`
       - ls
+      - sh lambda_alias.sh
