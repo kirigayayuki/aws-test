@@ -11,11 +11,11 @@ phases:
     on-failure: ABORT
     commands:
       - echo Build started on `date`
-      - sh lambda_deploy.sh
+      - sh stepfunctions_deploy.sh
       - sleep 10
   post_build:
     on-failure: ABORT
     commands:
       - echo Build completed on `date`
       - ls
-      - sh lambda_alias.sh
+      - sh stepfunctions_alias.sh
