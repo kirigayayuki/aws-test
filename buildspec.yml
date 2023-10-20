@@ -6,9 +6,9 @@ env:
     REPOSITORY_URI: "477460359712.dkr.ecr.ap-northeast-1.amazonaws.com/2175051_ecs-test"
 
 phases:
-  install:
-    runtime-versions:
-      docker: 18
+#  install:
+#    runtime-versions:
+#      docker: 18
   pre_build:
     commands:
 #      - ACCOUNT_ID=${CODEBUILD_BUILD_ARN} && IFS=':' && set -- $ACCOUNT_ID && ACCOUNT_ID=$5
