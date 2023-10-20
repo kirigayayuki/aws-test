@@ -21,8 +21,8 @@ phases:
     on-failure: ABORT
     commands:
 #      - cd ${CODEBUILD_SRC_DIR_SourceArtifact}
-      - cd src
-      - docker build -f ./Dockerfile -t $REPOSITORY_URI:latest .
+##      - cd src
+##      - docker build -f ./Dockerfile -t $REPOSITORY_URI:latest .
 #      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$COMMIT_ID
       - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:latest
 
@@ -30,7 +30,7 @@ phases:
     commands:
       - echo Build completed on `date`
       - echo Writing image definitions file...
-      - docker push $REPOSITORY_URI:latest
+##      - docker push $REPOSITORY_URI:latest
 #      - docker push $REPOSITORY_URI:$COMMIT_ID
 #      - cp ${CODEBUILD_SRC_DIR}/bo01-indev/appspec.yml ${CODEBUILD_SRC_DIR}/
 #      - cp ${CODEBUILD_SRC_DIR}/bo01-indev/taskdef.json ${CODEBUILD_SRC_DIR}/
