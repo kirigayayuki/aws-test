@@ -1,0 +1,47 @@
+version: 0.2
+env:
+  parameter-store:
+    ACCOUNT_ID: "477460359712"
+    AWS_REGION: "ap-northeast-1"
+    REPOSITORY_URI: "477460359712.dkr.ecr.ap-northeast-1.amazonaws.com/2175051_ecs-test"
+
+phases:
+  install:
+    runtime-versions:
+      docker: 18
+  pre_build:
+    commands:
+#      - ACCOUNT_ID=${CODEBUILD_BUILD_ARN} && IFS=':' && set -- $ACCOUNT_ID && ACCOUNT_ID=$5
+      - aws ecr get-login-password | docker login --username AWS --password-stdin https://${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+#      - TAG="$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8)"
+#      - echo $TAG
+#      - cd ${CODEBUILD_SRC_DIR_SourceArtifact}
+
+  build:
+    on-failure: ABORT
+    commands:
+#      - cd ${CODEBUILD_SRC_DIR_SourceArtifact}
+      - cd src
+      - docker build -f ./Dockerfile -t $REPOSITORY_URI:latest .
+#      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$COMMIT_ID
+      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:latest
+
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Writing image definitions file...
+      - docker push $REPOSITORY_URI:latest
+#      - docker push $REPOSITORY_URI:$COMMIT_ID
+      - cp ${CODEBUILD_SRC_DIR}/bo01-indev/appspec.yml ${CODEBUILD_SRC_DIR}/
+      - cp ${CODEBUILD_SRC_DIR}/bo01-indev/taskdef.json ${CODEBUILD_SRC_DIR}/
+#      - echo "{\"ImageURI\":\"${REPOSITORY_URI}:${COMMIT_ID}\"}"
+#      - echo "{\"ImageURI\":\"${REPOSITORY_URI}:${COMMIT_ID}\"}" > ${CODEBUILD_SRC_DIR}/imageDetail.json
+#      - echo "{\"ImageURI\":\"${REPOSITORY_URI}:latest\"}" > ${CODEBUILD_SRC_DIR}/imageDetail.json
+      - aws ecs register-task-definition --family 2175051-ecs-test --cli-input-json fileb://taskdef.json
+### イメージタグはlatest等固定化する必要有り      
+#artifacts:
+#  ## buildの最後で作成したファイルをアーティファクトとして流す
+#  files:
+#    - imageDetail.json
+#    - appspec.yml
+#    - taskdef.json
