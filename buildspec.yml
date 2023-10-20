@@ -32,8 +32,8 @@ phases:
       - echo Writing image definitions file...
       - docker push $REPOSITORY_URI:latest
 #      - docker push $REPOSITORY_URI:$COMMIT_ID
-      - cp ${CODEBUILD_SRC_DIR}/bo01-indev/appspec.yml ${CODEBUILD_SRC_DIR}/
-      - cp ${CODEBUILD_SRC_DIR}/bo01-indev/taskdef.json ${CODEBUILD_SRC_DIR}/
+#      - cp ${CODEBUILD_SRC_DIR}/bo01-indev/appspec.yml ${CODEBUILD_SRC_DIR}/
+#      - cp ${CODEBUILD_SRC_DIR}/bo01-indev/taskdef.json ${CODEBUILD_SRC_DIR}/
 #      - echo "{\"ImageURI\":\"${REPOSITORY_URI}:${COMMIT_ID}\"}"
 #      - echo "{\"ImageURI\":\"${REPOSITORY_URI}:${COMMIT_ID}\"}" > ${CODEBUILD_SRC_DIR}/imageDetail.json
 #      - echo "{\"ImageURI\":\"${REPOSITORY_URI}:latest\"}" > ${CODEBUILD_SRC_DIR}/imageDetail.json
