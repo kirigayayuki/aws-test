@@ -22,7 +22,7 @@ phases:
     commands:
 #      - cd ${CODEBUILD_SRC_DIR_SourceArtifact}
       - cd src
-      - docker build -f ./Dockerfile -t $REPOSITORY_URI:latest .
+      - docker build -f ./Dockerfile -t $REPOSITORY_URI:latest
 #      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$COMMIT_ID
       - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:latest
 
