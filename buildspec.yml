@@ -11,7 +11,7 @@ phases:
   pre_build:
     on-failure: ABORT
     commands:
-      - aws cloudformation validate-template --template-body=file://$PWD/template.yml
+      - aws cloudformation validate-template --template-body file://template.yml
   build:
     on-failure: ABORT
     commands:
