@@ -1,47 +1,32 @@
 version: 0.2
 env:
   variables:
-    ACCOUNT_ID: "477460359712"
+    S3_BUCKET: "2175051-sf-cicd-test-bucket"
     AWS_REGION: "ap-northeast-1"
     REPOSITORY_URI: "477460359712.dkr.ecr.ap-northeast-1.amazonaws.com/2175051_ecs-test"
+    
+phases:
+version: 0.2
 
 phases:
-#  install:
-#    runtime-versions:
-#      docker: 18
-  pre_build:
+  install:
     commands:
-#      - ACCOUNT_ID=${CODEBUILD_BUILD_ARN} && IFS=':' && set -- $ACCOUNT_ID && ACCOUNT_ID=$5
-      - aws ecr get-login-password | docker login --username AWS --password-stdin https://${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
-#      - TAG="$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8)"
-#      - echo $TAG
-#      - cd ${CODEBUILD_SRC_DIR_SourceArtifact}
-
+      - echo No Install phase
+  pre_build:
+    on-failure: ABORT
+    commands:
+      - aws cloudformation validate-template --template-body=file://$PWD/template.yml
   build:
     on-failure: ABORT
     commands:
-#      - cd ${CODEBUILD_SRC_DIR_SourceArtifact}
-##      - cd src
-##      - docker build -f ./Dockerfile -t $REPOSITORY_URI:latest .
-#      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$COMMIT_ID
-##      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:latest
+      - echo "Packaging Lambda source code..."
+      - aws cloudformation package --template template.yml --s3-bucket ${S3_BUCKET} --output-template packaged-template.yml
 
   post_build:
+    on-failure: ABORT
     commands:
       - echo Build completed on `date`
-      - echo Writing image definitions file...
-##      - docker push $REPOSITORY_URI:latest
-#      - docker push $REPOSITORY_URI:$COMMIT_ID
-#      - cp ${CODEBUILD_SRC_DIR}/bo01-indev/appspec.yml ${CODEBUILD_SRC_DIR}/
-#      - cp ${CODEBUILD_SRC_DIR}/bo01-indev/taskdef.json ${CODEBUILD_SRC_DIR}/
-#      - echo "{\"ImageURI\":\"${REPOSITORY_URI}:${COMMIT_ID}\"}"
-#      - echo "{\"ImageURI\":\"${REPOSITORY_URI}:${COMMIT_ID}\"}" > ${CODEBUILD_SRC_DIR}/imageDetail.json
-#      - echo "{\"ImageURI\":\"${REPOSITORY_URI}:latest\"}" > ${CODEBUILD_SRC_DIR}/imageDetail.json
-      - aws ecs register-task-definition --family 2175051-ecs-test --cli-input-json fileb://taskdef.json
-### イメージタグはlatest等固定化する必要有り      
-#artifacts:
-#  ## buildの最後で作成したファイルをアーティファクトとして流す
-#  files:
-#    - imageDetail.json
-#    - appspec.yml
-#    - taskdef.json
+      
+artifacts:
+  files:
+    - packaged-template.yml

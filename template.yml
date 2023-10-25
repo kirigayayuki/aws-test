@@ -1,0 +1,49 @@
+Resources:
+  MyLambdaFunction1:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: 2175051-CFn-testLambda-1
+      Handler: index.handler
+      Role: !GetAtt MyLambdaExecutionRole.Arn
+      Code: src/task1
+      Runtime: nodejs14.x
+  MyLambdaFunction2:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: 2175051-CFn-testLambda-2
+      Handler: index.handler
+      Role: !GetAtt MyLambdaExecutionRole.Arn
+      Code: src/task2
+      Runtime: nodejs14.x
+  MyLambdaFunction3:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: 2175051-CFn-testLambda-3
+      Handler: index.handler
+      Role: !GetAtt MyLambdaExecutionRole.Arn
+      Code: src/task3
+      Runtime: nodejs14.x
+
+  MyLambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName : 2175051-LambdaExecutionRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: 2175051-LambdaExecutionPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: arn:aws:logs:us-east-1:123456789012:log-group:/aws/lambda/2175051-MyLambdaFunction:*
+
