@@ -47,3 +47,21 @@ Resources:
                   - logs:PutLogEvents
                 Resource: arn:aws:logs:us-east-1:123456789012:log-group:/aws/lambda/2175051-MyLambdaFunction:*
 
+  MyStateMachine1:
+    Type: AWS::StepFunctions::StateMachine
+    Properties:
+      StateMachineName: 2175051-CFn-testStatemachine-lower1
+      RoleArn: arn:aws:iam::477460359712:role/service-role/StepFunctions-2175051-test-MyStateMachine-role-0bxq48c31
+      Definition: workflow_def/lower1_definition.json
+  MyStateMachine2:
+    Type: AWS::StepFunctions::StateMachine
+    Properties:
+      StateMachineName: 2175051-CFn-testStatemachine-lower2
+      RoleArn: arn:aws:iam::477460359712:role/service-role/StepFunctions-2175051-test-MyStateMachine-role-0bxq48c31
+      Definition: workflow_def/lower2_definition.json
+  MyStateMachine3:
+    Type: AWS::StepFunctions::StateMachine
+    Properties:
+      StateMachineName: 2175051-CFn-testStatemachine-upper
+      RoleArn: arn:aws:iam::477460359712:role/service-role/StepFunctions-2175051-test-MyStateMachine-role-0bxq48c31
+      Definition: workflow_def/upper_definition.json
