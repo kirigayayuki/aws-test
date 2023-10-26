@@ -15,7 +15,11 @@ phases:
   build:
     on-failure: ABORT
     commands:
-      - echo "Packaging Lambda source code..."
+      - echo "Uploading Statemachine Workflow Definition..."
+      - aws s3 cp workflow_def/lower1_definition.json s3://${S3_BUCKET}
+      - aws s3 cp workflow_def/lower2_definition.json s3://${S3_BUCKET}
+      - aws s3 cp workflow_def/upper_definition.json s3://${S3_BUCKET}
+      - echo "Packaging Lambda Source Code..."
       - aws cloudformation package --template template.yml --s3-bucket ${S3_BUCKET} --output-template packaged-template.yml
   post_build:
     on-failure: ABORT
