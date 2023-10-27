@@ -1,0 +1,14 @@
+{
+    "Name": "2175051-testJob1", 
+    "Description": "2175051-testJob1", 
+    "Role": "2175051-testGlueRole", 
+    "ExecutionProperty": {
+        "MaxConcurrentRuns": 1
+    }, 
+    "Command": {
+        "Name": "glueetl", 
+        "ScriptLocation": "s3://2175051-sf-cicd-test-bucket/glue/job1/glue_script.py"
+    }, 
+    "MaxRetries": 0, 
+    "AllocatedCapacity": 5
+}
