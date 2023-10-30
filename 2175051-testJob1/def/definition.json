@@ -1,0 +1,10 @@
+{
+    "JobName": "2175051-testJob1",
+    "JobUpdate": {
+        "Role" : "arn:aws:iam::477460359712:role/2175051-testGlueRole",
+        "Command": {
+            "Name" : "pythonshell",
+            "ScriptLocation": "s3://2175051-sf-cicd-test-bucket/glue/job1/glue_script.py"
+        }
+    }
+}

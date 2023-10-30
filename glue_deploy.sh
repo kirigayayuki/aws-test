@@ -1,22 +1,27 @@
 #!/bin/bash
 #
 #
-FUNC_LIST='lambda.lst'
-cat ${FUNC_LIST} | while read line
+BUCKET='s3://2175051-sf-cicd-test-bucket/glue/'
+JOB_LIST='glue.lst'
+cat ${JOB_LIST} | while read line
 do
-  FUNC_NAME=`echo "${line}" | awk -F',' {'print $1'}`
-  FUNC_FILE=`echo "${line}" | awk -F',' {'print $2'}`
-  echo "${FUNC_NAME} , ${FUNC_FILE}"
-  cd src/${FUNC_FILE}
+  JOB_NAME=`echo "${line}" | awk -F',' {'print $1'}`
+  JOB_FILE=`echo "${line}" | awk -F',' {'print $2'}`
+  echo "${JOB_NAME} , ${JOB_FILE}"
+  cd ${JOB_NAME}/script
   if [ $? -ne 0 ]; then
-    echo "Lambda No such file or directory. FunctionName=${FUNC_NAME}, DirectoryName=${FUNC_FILE}."
+    echo "Glue Job No such file or directory. JobName(Directory)=${JOB_NAME}, Job FileName=${JOB_FILE}."
     exit 2
   fi
-  zip -r glue.zip ./*
-  aws glue create-job --cli-input-json file://job1.json
-  echo "$?"
+  aws s3 cp ${JOB_FILE} s3://${BUCKET}${JOB_NAME}/${JOB_FILE}
   if [ $? -ne 0 ]; then
-    echo "Lambda Deploy Error. FunctionName=${FUNC_NAME}."
+    echo "Glue Job s3 Upload Error. JobName(Directory)=${JOB_NAME}, Job FileName=${JOB_FILE}."
+    exit 2
+  fi
+  cd ../def
+  aws glue update-job --cli-input-json file://definition.json
+  if [ $? -ne 0 ]; then
+    echo "Glue Job Deploy Error. JobName(Directory)=${JOB_NAME}, Job FileName=${JOB_FILE}."
     exit 2
   fi
   cd ../../
