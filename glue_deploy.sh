@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 #
-BUCKET='s3://2175051-sf-cicd-test-bucket/glue/'
+BUCKET='2175051-sf-cicd-test-bucket/glue/'
 JOB_LIST='glue.lst'
 cat ${JOB_LIST} | while read line
 do
@@ -13,8 +13,7 @@ do
     echo "Glue Job No such file or directory. JobName(Directory)=${JOB_NAME}, Job FileName=${JOB_FILE}."
     exit 2
   fi
-  aws s3 ls
-  echo "aws s3 cp ${JOB_FILE} s3://${BUCKET}${JOB_NAME}/"
+  aws s3 cp ${JOB_FILE} s3://${BUCKET}${JOB_NAME}/
   if [ $? -ne 0 ]; then
     echo "Glue Job s3 Upload Error. JobName(Directory)=${JOB_NAME}, Job FileName=${JOB_FILE}."
     exit 2
