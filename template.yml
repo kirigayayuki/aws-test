@@ -1,0 +1,16 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: AWS Glue Job Stack
+
+  GlueJob1:
+    Type: AWS::Glue::Job
+    Properties:
+      Name: 2175051-CFnTest-GlueJob1
+      Role: arn:aws:iam::477460359712:role/2175051-testGlueRole
+      Command:
+        Name: pythonshell
+        ScriptLocation: s3://2175051-sf-cicd-test-bucket/glue/job1/glue_script.py
+      NumberOfWorkers: 1
+      MaxRetries: 0
+      Timeout: 5
+      ExecutionProperty:
+        MaxConcurrentRuns: 5  
