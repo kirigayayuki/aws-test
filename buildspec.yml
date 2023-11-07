@@ -1,28 +1,18 @@
 version: 0.2
-env:
-  variables:
-    S3_BUCKET: "2175051-sf-cicd-test-bucket"
-    AWS_REGION: "ap-northeast-1"
+
 phases:
   install:
     commands:
       - echo No Install phase
   pre_build:
-    on-failure: ABORT
     commands:
-      - aws cloudformation validate-template --template-body file://template.yml
+      - echo No Pre Build phase
   build:
     on-failure: ABORT
     commands:
-      - echo "Uploading Glue Script..."
-      - aws s3 cp 2175051-CFnTestJob1/glue_script.py s3://${S3_BUCKET}/glue/2175051-CFnTestJob1/
-      - echo "Packaging Glue Source Code..."
-      - aws cloudformation package --template template.yml --s3-bucket ${S3_BUCKET}/glue/2175051-CFnTestJob1/ --output-template packaged-template.yml
+      - echo Build started on `date`
+      - sh layer_deploy.sh
   post_build:
     on-failure: ABORT
     commands:
       - echo Build completed on `date`
-      
-artifacts:
-  files:
-    - packaged-template.yml
