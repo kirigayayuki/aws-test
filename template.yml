@@ -1,0 +1,127 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Parameters:
+  StateMachine1Name:
+    Description: Please type the Step Functions StateMachine Name.
+    Type: String
+    Default: '2175051-CFn-testStatemachine-lower1'
+  StateMachine2Name:
+    Description: Please type the Step Functions StateMachine Name.
+    Type: String
+    Default: '2175051-CFn-testStatemachine-lower2'
+  StateMachine3Name:
+    Description: Please type the Step Functions StateMachine Name.
+    Type: String
+    Default: '2175051-CFn-testStatemachine-upper'
+  LambdaFunction1Name:
+    Description: Please type the Lambda Function Name.
+    Type: String
+    Default: '2175051-CFn-testLambda-1'
+  LambdaFunction2Name:
+    Description: Please type the Lambda Function Name.
+    Type: String
+    Default: '2175051-CFn-testLambda-2'
+  LambdaFunction3Name:
+    Description: Please type the Lambda Function Name.
+    Type: String
+    Default: '2175051-CFn-testLambda-3'
+    
+Resources:
+  LambdaFunction1:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${LambdaFunction1Name}
+      CodeUri: functions/task1/
+      Handler: index.handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Runtime: nodejs14.x
+      Timeout: 60
+  LambdaFunction2:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${LambdaFunction2Name}
+      CodeUri: functions/task2/
+      Handler: index.handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Runtime: nodejs14.x
+      Timeout: 60
+  LambdaFunction3:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${LambdaFunction3Name}
+      CodeUri: functions/task3/
+      Handler: index.handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Runtime: nodejs14.x
+      Timeout: 60
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName : 2175051-LambdaExecutionRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: 2175051-LambdaExecutionPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: arn:aws:logs:us-east-1:123456789012:log-group:/aws/lambda/2175051-MyLambdaFunction:*
+
+  StateMachine1:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      Name: !Sub ${StateMachine1Name}
+      DefinitionUri: statemachine/lower1_definition.json
+      Role: arn:aws:iam::477460359712:role/service-role/StepFunctions-2175051-test-MyStateMachine-role-0bxq48c31
+      Logging:
+        Level: ALL
+        IncludeExecutionData: True
+        Destinations:
+          - CloudWatchLogsLogGroup:
+              LogGroupArn: !GetAtt StateMachine1LogGroup.Arn
+  StateMachine2:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      Name: !Sub ${StateMachine2Name}
+      DefinitionUri: statemachine/lower2_definition.json
+      Role: arn:aws:iam::477460359712:role/service-role/StepFunctions-2175051-test-MyStateMachine-role-0bxq48c31
+      Logging:
+        Level: ALL
+        IncludeExecutionData: True
+        Destinations:
+          - CloudWatchLogsLogGroup:
+              LogGroupArn: !GetAtt StateMachine2LogGroup.Arn
+  StateMachine3:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      Name: !Sub ${StateMachine3Name}
+      DefinitionUri: statemachine/upper_definition.json
+      Role: arn:aws:iam::477460359712:role/service-role/StepFunctions-2175051-test-MyStateMachine-role-0bxq48c31
+      Logging:
+        Level: ALL
+        IncludeExecutionData: True
+        Destinations:
+          - CloudWatchLogsLogGroup:
+              LogGroupArn: !GetAtt StateMachine3LogGroup.Arn
+  StateMachine1LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName : !Join [ "", [ '/aws/states/', !Sub '${StateMachine1Name}', '-Logs' ] ]
+  StateMachine2LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName : !Join [ "", [ '/aws/states/', !Sub '${StateMachine2Name}', '-Logs' ] ]
+  StateMachine3LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName : !Join [ "", [ '/aws/states/', !Sub '${StateMachine3Name}', '-Logs' ] ]
