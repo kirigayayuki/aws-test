@@ -144,15 +144,9 @@ Resources:
         - Key: Name
           Value: !Sub ${LambdaFunctionName1}
         - Key: Environment
-          Value: !FindInMap
-            - TagsMap
-            - EnvName
-            - Environment
+          Value: !FindInMap [ TagsMap, EnvName, Environment ]
         - Key: Service
-          Value: !FindInMap
-            - TagsMap
-            - EnvName
-            - Service
+          Value: !FindInMap [ TagsMap, EnvName, Service ]
       Layers: 
         - !Ref LambdaLayer1
         - !Ref LambdaLayer2
@@ -180,15 +174,9 @@ Resources:
         - Key: Name
           Value: !Sub ${StateMachineName1}
         - Key: Environment
-          Value: !FindInMap
-            - TagsMap
-            - EnvName
-            - Environment
+          Value: !FindInMap [ TagsMap, EnvName, Environment ]
         - Key: Service
-          Value: !FindInMap
-            - TagsMap
-            - EnvName
-            - Service
+          Value: !FindInMap [ TagsMap, EnvName, Service ]
             
 #ステートマシン用ロググループ
   StateMachine1LogGroup:
@@ -200,15 +188,9 @@ Resources:
         - Key: Name
           Value: !Join [ "", [ '/aws/states/', !Sub '${StateMachine1Name}', '-lg' ] ]
         - Key: Environment
-          Value: !FindInMap
-            - TagsMap
-            - EnvName
-            - Environment
+          Value: !FindInMap [ TagsMap, EnvName, Environment ]
         - Key: Service
-          Value: !FindInMap
-            - TagsMap
-            - EnvName
-            - Service
+          Value: !FindInMap [ TagsMap, EnvName, Service ]
 
 
 
@@ -241,15 +223,9 @@ Resources:
         - Key: Name
           Value: !Sub ${LambdaFunctionName1}-role
         - Key: Environment
-          Value: !FindInMap
-            - TagsMap
-            - EnvName
-            - Environment
+          Value: !FindInMap [ TagsMap, EnvName, Environment ]
         - Key: Service
-          Value: !FindInMap
-            - TagsMap
-            - EnvName
-            - Service
+          Value: !FindInMap [ TagsMap, EnvName, Service ]
 
   StateMachineExecutionRole1:
     Type: AWS::IAM::Role
@@ -285,12 +261,6 @@ Resources:
         - Key: Name
           Value: !Sub ${LambdaFunctionName1}-role
         - Key: Environment
-          Value: !FindInMap
-            - TagsMap
-            - EnvName
-            - Environment
+          Value: !FindInMap [ TagsMap, EnvName, Environment ]
         - Key: Service
-          Value: !FindInMap
-            - TagsMap
-            - EnvName
-            - Service
+          Value: !FindInMap [ TagsMap, EnvName, Service ]
