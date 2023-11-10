@@ -154,6 +154,7 @@ Resources:
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
                   - logs:PutLogEvents
+                  - logs:TagResource
                 Resource: !Sub arn:aws:logs:ap-northeast-1:${AwsAccount}:log-group:/aws/lambda/${LambdaFunctionName1}:*
       Tags: 
         - Key: Name
@@ -180,6 +181,7 @@ Resources:
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
                   - logs:PutLogEvents
+                  - logs:TagResource
                 Resource: !Sub arn:aws:logs:ap-northeast-1:${AwsAccount}:log-group:/aws/states/${StateMachineName1}-lg:*
               - Effect: Allow
                 Action:
