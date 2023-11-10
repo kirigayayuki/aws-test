@@ -103,7 +103,7 @@ Resources:
     Type: AWS::Serverless::StateMachine
     Properties:
       Name: !Sub ${StateMachineName1}
-      DefinitionUri: !Sub statemachine/${StateMachineName1}.json
+      DefinitionUri: !Sub "statemachine/${StateMachineName1}.json"
       Role: !GetAtt StateMachineExecutionRole1.Arn
       Type: STANDARD
       Logging:
