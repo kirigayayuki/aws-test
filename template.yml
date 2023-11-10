@@ -31,7 +31,7 @@ Parameters:
   LambdaFunctionName1:
     Description: 'ファイル形式チェック用Lambda'
     Type: String
-    Default: 'bo01-indev-bcpf-check_file-lambda'
+    Default: 'bo01-indev-bcpf-check-file-lambda'
 
 
   LambdaLayerName1:
