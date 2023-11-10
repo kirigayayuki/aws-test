@@ -156,7 +156,7 @@ Resources:
                   - logs:PutLogEvents
                   - logs:TagResource
                   - ec2:*
-                Resource: !Sub arn:aws:logs:ap-northeast-1:${AwsAccount}:log-group:/aws/lambda/${LambdaFunctionName1}:*
+                Resource: '*'
       Tags: 
         - Key: Name
           Value: !Sub ${LambdaFunctionName1}-role
@@ -182,7 +182,7 @@ Resources:
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
                   - logs:PutLogEvents
-                  - logs:TagResource
+                  - logs:*
                   - lambda:InvokeFunction
                   - states:*
                 Resource: '*'
