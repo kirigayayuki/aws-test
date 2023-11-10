@@ -105,7 +105,8 @@ Resources:
     Properties:
       LayerName: !Sub ${LambdaLayerName1}
       Description: !Sub ${LambdaLayerName1}
-      CompatibleArchitectures: x86_64
+      CompatibleArchitectures: 
+        - x86_64
       CompatibleRuntimes: 
         - python3.11
       ContentUri: !Sub layer/${LambdaLayerName1}
@@ -114,7 +115,8 @@ Resources:
     Properties:
       LayerName: !Sub ${LambdaLayerName2}
       Description: !Sub ${LambdaLayerName2}
-      CompatibleArchitectures: x86_64
+      CompatibleArchitectures: 
+        - x86_64
       CompatibleRuntimes: 
         - python3.11
       ContentUri: !Sub layer/${LambdaLayerName2}
