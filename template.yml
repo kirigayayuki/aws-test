@@ -53,7 +53,7 @@ Resources:
       CompatibleArchitectures: 
         - x86_64
       CompatibleRuntimes: 
-        - python3.11
+        - python3.10
       ContentUri: !Sub layer/${LambdaLayerName1}
   LambdaLayer2:
     Type: "AWS::Serverless::LayerVersion"
@@ -63,7 +63,7 @@ Resources:
       CompatibleArchitectures: 
         - x86_64
       CompatibleRuntimes: 
-        - python3.11
+        - python3.10
       ContentUri: !Sub layer/${LambdaLayerName2}
       
 #LambdaSAM
