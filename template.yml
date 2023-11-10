@@ -27,67 +27,12 @@ Parameters:
     Description: 'ダウンロードファイル作成用ステートマシン'
     Type: String
     Default: 'bo01-indev-bcpf-make-download-file-statemachine'
-  StateMachineName2:
-    Description: '名簿チェック用ステートマシン'
-    Type: String
-    Default: 'bo01-indev-bcpf-meibo-check-statemachine'
-  StateMachineName3:
-    Description: '名簿差分判別（デフォルト）用ステートマシン'
-    Type: String
-    Default: 'bo01-indev-bcpf-meibo-sabun00-statemachine'
-  StateMachineName4:
-    Description: '名簿差分判別（文科省）用ステートマシン'
-    Type: String
-    Default: 'bo01-indev-bcpf-meibo-sabun01-statemachine'
-  StateMachineName5:
-    Description: '名簿マスタ反映用ステートマシン'
-    Type: String
-    Default: 'bo01-indev-bcpf-meibo-approve-statemachine'
-  StateMachineName6:
-    Description: '名簿チェック（入会のみ）用ステートマシン'
-    Type: String
-    Default: 'bo01-indev-bcpf-meibo-check-insert-statemachine'
-  StateMachineName7:
-    Description: '名簿マスタ反映（入会のみ）用ステートマシン'
-    Type: String
-    Default: 'bo01-indev-bcpf-meibo-approve-insert-statemachine'
-  StateMachineName8:
-    Description: '名簿チェック（退会のみ）用ステートマシン'
-    Type: String
-    Default: 'bo01-indev-bcpf-meibo-check-delete-statemachine'    
-  StateMachineName9:
-    Description: '名簿マスタ反映（退会のみ）用ステートマシン'
-    Type: String
-    Default: 'bo01-indev-bcpf-meibo-approve-delete-statemachine'
-  StateMachineName10:
-    Description: '名簿チェック（更新のみ）用ステートマシン'
-    Type: String
-    Default: 'bo01-indev-bcpf-meibo-check-update-statemachine'
-  StateMachineName11:
-    Description: '名簿マスタ反映（更新のみ）用ステートマシン'
-    Type: String
-    Default: 'bo01-indev-bcpf-meibo-approve-update-statemachine'
     
   LambdaFunctionName1:
     Description: 'ファイル形式チェック用Lambda'
     Type: String
     Default: 'bo01-indev-bcpf-check_file-lambda'
-  LambdaFunctionName2:
-    Description: 'SQL実行（更新系）用Lambda'
-    Type: String
-    Default: 'bo01-indev-bcpf-execute-sql-update-lambda'
-  LambdaFunctionName3:
-    Description: 'SQL実行（参照系）用Lambda'
-    Type: String
-    Default: 'bo01-indev-bcpf-execute-sql-select-lambda'
-  LambdaFunctionName4:
-    Description: 'Excel-CSV変換用Lambda'
-    Type: String
-    Default: 'bo01-indev-bcpf-excel2csv-lambda'
-  LambdaFunctionName5:
-    Description: 'ダウンロードファイル作成用Lambda'
-    Type: String
-    Default: 'bo01-indev-bcpf-make-download-file-lambda'
+
 
   LambdaLayerName1:
     Description: 'psycopg2用レイヤー'
@@ -129,10 +74,12 @@ Resources:
       CodeUri: !Sub functions/${LambdaFunctionName1}/
       Handler: lambda_function.lambda_handler
       Role: !GetAtt LambdaExecutionRole1.Arn
-      Runtime: python3.11
-      Architectures: x86_64
+      Runtime: python3.10
+      Architectures: 
+        - x86_64
       MemorySize: 128
-      EphemeralStorage: 512
+      EphemeralStorage:
+        Size: 512
       Timeout: 30
       VpcConfig: 
         SecurityGroupIds:
@@ -174,10 +121,10 @@ Resources:
   StateMachine1LogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Join [ "", [ '/aws/states/', !Sub '${StateMachine1Name}', '-lg' ] ]
+      LogGroupName: !Join [ "", [ '/aws/states/', !Sub '${StateMachineName1}', '-lg' ] ]
       RetentionInDays: 7
       Tags: 
-        Name: !Join [ "", [ '/aws/states/', !Sub '${StateMachine1Name}', '-lg' ] ]
+        Name: !Join [ "", [ '/aws/states/', !Sub '${StateMachineName1}', '-lg' ] ]
 
 
 
