@@ -54,7 +54,7 @@ Resources:
         - x86_64
       CompatibleRuntimes: 
         - python3.10
-      ContentUri: !Sub layer/${LambdaLayerName1}
+      ContentUri: layer/psycopg2/
   LambdaLayer2:
     Type: "AWS::Serverless::LayerVersion"
     Properties:
@@ -64,14 +64,14 @@ Resources:
         - x86_64
       CompatibleRuntimes: 
         - python3.10
-      ContentUri: !Sub layer/${LambdaLayerName2}
+      ContentUri: layer/openpyxl/
       
 #LambdaSAM
   LambdaFunction1:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: !Sub ${LambdaFunctionName1}
-      CodeUri: !Sub functions/${LambdaFunctionName1}/
+      CodeUri: functions/bo01-indev-bcpf-check-file-lambda/
       Handler: lambda_function.lambda_handler
       Role: !GetAtt LambdaExecutionRole1.Arn
       Runtime: python3.10
