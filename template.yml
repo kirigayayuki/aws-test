@@ -185,7 +185,7 @@ Resources:
                   - logs:TagResource
                   - lambda:InvokeFunction
                   - states:*
-                Resource: "*"
+                Resource: '*'
       Tags: 
         - Key: Name
           Value: !Sub ${StateMachineName1}-role
