@@ -6,10 +6,6 @@ Mappings:
       Environment: "Indev"
       Service: "bcpf"
 Parameters:
-  AwsAccount:
-    Description: 'AWSアカウント番号'
-    Type: String
-    Default: '477460359712'
   PrivateSubnet1:
     Description: 'プライベートサブネット1'
     Type: String
