@@ -103,7 +103,7 @@ Resources:
     Type: AWS::Serverless::StateMachine
     Properties:
       Name: !Sub ${StateMachineName1}
-      DefinitionUri: !Sub "statemachine/${StateMachineName1}.json"
+      DefinitionUri: statemachine/bo01-indev-bcpf-make-download-file-statemachine.json
       Role: !GetAtt StateMachineExecutionRole1.Arn
       Type: STANDARD
       Logging:
