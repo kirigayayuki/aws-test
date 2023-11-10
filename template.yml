@@ -1,63 +1,222 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
+Mappings:
+  TagsMap:
+    EnvName:
+      Environment: "Indev"
+      Service: "bcpf"
 Parameters:
-  StateMachine1Name:
-    Description: Please type the Step Functions StateMachine Name.
+  AwsAccount:
+    Description: 'AWSアカウント番号'
     Type: String
-    Default: '2175051-CFn-testStatemachine-lower1'
-  StateMachine2Name:
-    Description: Please type the Step Functions StateMachine Name.
+    Default: '477460359712'
+  PrivateSubnet1:
+    Description: 'プライベートサブネット1'
     Type: String
-    Default: '2175051-CFn-testStatemachine-lower2'
-  StateMachine3Name:
-    Description: Please type the Step Functions StateMachine Name.
+    Default: 'subnet-08b3b53b973fe0d23'
+  PrivateSubnet2:
+    Description: 'プライベートサブネット2'
     Type: String
-    Default: '2175051-CFn-testStatemachine-upper'
-  LambdaFunction1Name:
-    Description: Please type the Lambda Function Name.
+    Default: 'subnet-08b3b53b973fe0d23'
+  LambdaSG:
+    Description: '仮LambdaSG'
     Type: String
-    Default: '2175051-CFn-testLambda-1'
-  LambdaFunction2Name:
-    Description: Please type the Lambda Function Name.
+    Default: 'sg-0bcb3b17a0d7db869'
+    
+  StateMachineName1:
+    Description: 'ダウンロードファイル作成用ステートマシン'
     Type: String
-    Default: '2175051-CFn-testLambda-2'
-  LambdaFunction3Name:
-    Description: Please type the Lambda Function Name.
+    Default: 'bo01-indev-bcpf-make-download-file-statemachine'
+  StateMachineName2:
+    Description: '名簿チェック用ステートマシン'
     Type: String
-    Default: '2175051-CFn-testLambda-3'
+    Default: 'bo01-indev-bcpf-meibo-check-statemachine'
+  StateMachineName3:
+    Description: '名簿差分判別（デフォルト）用ステートマシン'
+    Type: String
+    Default: 'bo01-indev-bcpf-meibo-sabun00-statemachine'
+  StateMachineName4:
+    Description: '名簿差分判別（文科省）用ステートマシン'
+    Type: String
+    Default: 'bo01-indev-bcpf-meibo-sabun01-statemachine'
+  StateMachineName5:
+    Description: '名簿マスタ反映用ステートマシン'
+    Type: String
+    Default: 'bo01-indev-bcpf-meibo-approve-statemachine'
+  StateMachineName6:
+    Description: '名簿チェック（入会のみ）用ステートマシン'
+    Type: String
+    Default: 'bo01-indev-bcpf-meibo-check-insert-statemachine'
+  StateMachineName7:
+    Description: '名簿マスタ反映（入会のみ）用ステートマシン'
+    Type: String
+    Default: 'bo01-indev-bcpf-meibo-approve-insert-statemachine'
+  StateMachineName8:
+    Description: '名簿チェック（退会のみ）用ステートマシン'
+    Type: String
+    Default: 'bo01-indev-bcpf-meibo-check-delete-statemachine'    
+  StateMachineName9:
+    Description: '名簿マスタ反映（退会のみ）用ステートマシン'
+    Type: String
+    Default: 'bo01-indev-bcpf-meibo-approve-delete-statemachine'
+  StateMachineName10:
+    Description: '名簿チェック（更新のみ）用ステートマシン'
+    Type: String
+    Default: 'bo01-indev-bcpf-meibo-check-update-statemachine'
+  StateMachineName11:
+    Description: '名簿マスタ反映（更新のみ）用ステートマシン'
+    Type: String
+    Default: 'bo01-indev-bcpf-meibo-approve-update-statemachine'
+    
+  LambdaFunctionName1:
+    Description: 'ファイル形式チェック用Lambda'
+    Type: String
+    Default: 'bo01-indev-bcpf-check_file-lambda'
+  LambdaFunctionName2:
+    Description: 'SQL実行（更新系）用Lambda'
+    Type: String
+    Default: 'bo01-indev-bcpf-execute-sql-update-lambda'
+  LambdaFunctionName3:
+    Description: 'SQL実行（参照系）用Lambda'
+    Type: String
+    Default: 'bo01-indev-bcpf-execute-sql-select-lambda'
+  LambdaFunctionName4:
+    Description: 'Excel-CSV変換用Lambda'
+    Type: String
+    Default: 'bo01-indev-bcpf-excel2csv-lambda'
+  LambdaFunctionName5:
+    Description: 'ダウンロードファイル作成用Lambda'
+    Type: String
+    Default: 'bo01-indev-bcpf-make-download-file-lambda'
+
+  LambdaLayerName1:
+    Description: 'psycopg2用レイヤー'
+    Type: String
+    Default: 'psycopg2'
+  LambdaLayerName2:
+    Description: 'openpyxl用レイヤー'
+    Type: String
+    Default: 'openpyxl'
     
 Resources:
+#Lambda Layer作成
+  LambdaLayer1:
+    Type: "AWS::Serverless::LayerVersion"
+    Properties:
+      LayerName: !Sub ${LambdaLayerName1}
+      Description: !Sub ${LambdaLayerName1}
+      CompatibleArchitectures: x86_64
+      CompatibleRuntimes: 
+        - python3.11
+      ContentUri: !Sub layer/${LambdaLayerName1}
+  LambdaLayer2:
+    Type: "AWS::Serverless::LayerVersion"
+    Properties:
+      LayerName: !Sub ${LambdaLayerName2}
+      Description: !Sub ${LambdaLayerName2}
+      CompatibleArchitectures: x86_64
+      CompatibleRuntimes: 
+        - python3.11
+      ContentUri: !Sub layer/${LambdaLayerName2}
+      
+#LambdaSAM
   LambdaFunction1:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub ${LambdaFunction1Name}
-      CodeUri: functions/task1/
-      Handler: index.handler
-      Role: !GetAtt LambdaExecutionRole.Arn
-      Runtime: nodejs14.x
-      Timeout: 60
-  LambdaFunction2:
-    Type: AWS::Serverless::Function
+      FunctionName: !Sub ${LambdaFunctionName1}
+      CodeUri: !Sub functions/${LambdaFunctionName1}/
+      Handler: lambda_function.lambda_handler
+      Role: !GetAtt LambdaExecutionRole1.Arn
+      Runtime: python3.11
+      Architectures: x86_64
+      MemorySize: 128
+      EphemeralStorage: 512
+      Timeout: 30
+      VpcConfig: 
+        SecurityGroupIds:
+          - !Sub ${LambdaSG} ###### 暫定でdefault
+        SubnetIds:
+          - !Sub ${PrivateSubnet1}
+          - !Sub ${PrivateSubnet2}
+      Tags: 
+        - Key: Name
+          Value: !Sub ${LambdaFunctionName1}
+        - Key: Environment
+          Value: !FindInMap
+            - TagsMap
+            - EnvName
+            - Environment
+        - Key: Service
+          Value: !FindInMap
+            - TagsMap
+            - EnvName
+            - Service
+      Layers: 
+        - !Ref LambdaLayer1
+        - !Ref LambdaLayer2
+      Environment: 
+        Variables:
+          KeyName1: Value1
+          KeyName2: Value2
+
+                
+#StepFunctionsSAM
+  StateMachine1:
+    Type: AWS::Serverless::StateMachine
     Properties:
-      FunctionName: !Sub ${LambdaFunction2Name}
-      CodeUri: functions/task2/
-      Handler: index.handler
-      Role: !GetAtt LambdaExecutionRole.Arn
-      Runtime: nodejs14.x
-      Timeout: 60
-  LambdaFunction3:
-    Type: AWS::Serverless::Function
+      Name: !Sub ${StateMachineName1}
+      DefinitionUri: statemachine/${StateMachineName1}.json
+      Role: !GetAtt StateMachineExecutionRole1.Arn
+      Type: STANDARD
+      Logging:
+        Level: ALL
+        IncludeExecutionData: True
+        Destinations:
+          - CloudWatchLogsLogGroup:
+              LogGroupArn: !GetAtt StateMachine1LogGroup.Arn
+      Tags: 
+        - Key: Name
+          Value: !Sub ${StateMachineName1}
+        - Key: Environment
+          Value: !FindInMap
+            - TagsMap
+            - EnvName
+            - Environment
+        - Key: Service
+          Value: !FindInMap
+            - TagsMap
+            - EnvName
+            - Service
+            
+#ステートマシン用ロググループ
+  StateMachine1LogGroup:
+    Type: AWS::Logs::LogGroup
     Properties:
-      FunctionName: !Sub ${LambdaFunction3Name}
-      CodeUri: functions/task3/
-      Handler: index.handler
-      Role: !GetAtt LambdaExecutionRole.Arn
-      Runtime: nodejs14.x
-      Timeout: 60
-  LambdaExecutionRole:
+      LogGroupName: !Join [ "", [ '/aws/states/', !Sub '${StateMachine1Name}', '-lg' ] ]
+      RetentionInDays: 7
+      Tags: 
+        - Key: Name
+          Value: !Join [ "", [ '/aws/states/', !Sub '${StateMachine1Name}', '-lg' ] ]
+        - Key: Environment
+          Value: !FindInMap
+            - TagsMap
+            - EnvName
+            - Environment
+        - Key: Service
+          Value: !FindInMap
+            - TagsMap
+            - EnvName
+            - Service
+
+
+
+
+
+#IAM
+  LambdaExecutionRole1:
     Type: AWS::IAM::Role
     Properties:
-      RoleName : 2175051-LambdaExecutionRole
+      RoleName : !Sub ${LambdaFunctionName1}-role
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -66,7 +225,7 @@ Resources:
               Service: lambda.amazonaws.com
             Action: sts:AssumeRole
       Policies:
-        - PolicyName: 2175051-LambdaExecutionPolicy
+        - PolicyName: !Sub ${LambdaFunctionName1}-policy
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
@@ -75,53 +234,61 @@ Resources:
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
                   - logs:PutLogEvents
-                Resource: arn:aws:logs:us-east-1:123456789012:log-group:/aws/lambda/2175051-MyLambdaFunction:*
+                Resource: !Sub arn:aws:logs:ap-northeast-1:${AwsAccount}:log-group:/aws/lambda/${LambdaFunctionName1}:*
+      Tags: 
+        - Key: Name
+          Value: !Sub ${LambdaFunctionName1}-role
+        - Key: Environment
+          Value: !FindInMap
+            - TagsMap
+            - EnvName
+            - Environment
+        - Key: Service
+          Value: !FindInMap
+            - TagsMap
+            - EnvName
+            - Service
 
-  StateMachine1:
-    Type: AWS::Serverless::StateMachine
+  StateMachineExecutionRole1:
+    Type: AWS::IAM::Role
     Properties:
-      Name: !Sub ${StateMachine1Name}
-      DefinitionUri: statemachine/lower1_definition.json
-      Role: arn:aws:iam::477460359712:role/service-role/StepFunctions-2175051-test-MyStateMachine-role-0bxq48c31
-      Logging:
-        Level: ALL
-        IncludeExecutionData: True
-        Destinations:
-          - CloudWatchLogsLogGroup:
-              LogGroupArn: !GetAtt StateMachine1LogGroup.Arn
-  StateMachine2:
-    Type: AWS::Serverless::StateMachine
-    Properties:
-      Name: !Sub ${StateMachine2Name}
-      DefinitionUri: statemachine/lower2_definition.json
-      Role: arn:aws:iam::477460359712:role/service-role/StepFunctions-2175051-test-MyStateMachine-role-0bxq48c31
-      Logging:
-        Level: ALL
-        IncludeExecutionData: True
-        Destinations:
-          - CloudWatchLogsLogGroup:
-              LogGroupArn: !GetAtt StateMachine2LogGroup.Arn
-  StateMachine3:
-    Type: AWS::Serverless::StateMachine
-    Properties:
-      Name: !Sub ${StateMachine3Name}
-      DefinitionUri: statemachine/upper_definition.json
-      Role: arn:aws:iam::477460359712:role/service-role/StepFunctions-2175051-test-MyStateMachine-role-0bxq48c31
-      Logging:
-        Level: ALL
-        IncludeExecutionData: True
-        Destinations:
-          - CloudWatchLogsLogGroup:
-              LogGroupArn: !GetAtt StateMachine3LogGroup.Arn
-  StateMachine1LogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      LogGroupName : !Join [ "", [ '/aws/states/', !Sub '${StateMachine1Name}', '-Logs' ] ]
-  StateMachine2LogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      LogGroupName : !Join [ "", [ '/aws/states/', !Sub '${StateMachine2Name}', '-Logs' ] ]
-  StateMachine3LogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      LogGroupName : !Join [ "", [ '/aws/states/', !Sub '${StateMachine3Name}', '-Logs' ] ]
+      RoleName : !Sub ${StateMachineName1}-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: states.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: !Sub ${StateMachineName1}-policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !Sub arn:aws:logs:ap-northeast-1:${AwsAccount}:log-group:/aws/states/${StateMachineName1}-lg:*
+              - Effect: Allow
+                Action:
+                  - lambda:InvokeFunction
+                Resource: !Sub arn:aws:lambda:ap-northeast-1:${AwsAccount}:function:*
+              - Effect: Allow
+                Action:
+                  - states:*
+                Resource: !Sub arn:aws:states:ap-northeast-1:${AwsAccount}:stateMachine:*
+      Tags: 
+        - Key: Name
+          Value: !Sub ${LambdaFunctionName1}-role
+        - Key: Environment
+          Value: !FindInMap
+            - TagsMap
+            - EnvName
+            - Environment
+        - Key: Service
+          Value: !FindInMap
+            - TagsMap
+            - EnvName
+            - Service
