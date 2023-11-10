@@ -141,13 +141,8 @@ Resources:
           - !Sub ${PrivateSubnet1}
           - !Sub ${PrivateSubnet2}
       Tags: 
-        - 
-          Key: Name
+        - Key: Name
           Value: !Sub ${LambdaFunctionName1}
-        - Key: Environment
-          Value: !FindInMap [ TagsMap, EnvName, Environment ]
-        - Key: Service
-          Value: !FindInMap [ TagsMap, EnvName, Service ]
       Layers: 
         - !Ref LambdaLayer1
         - !Ref LambdaLayer2
