@@ -183,15 +183,9 @@ Resources:
                   - logs:CreateLogStream
                   - logs:PutLogEvents
                   - logs:TagResource
-                Resource:*
-              - Effect: Allow
-                Action:
                   - lambda:InvokeFunction
-                Resource:*
-              - Effect: Allow
-                Action:
                   - states:*
-                Resource:*
+                Resource: *
       Tags: 
         - Key: Name
           Value: !Sub ${StateMachineName1}-role
