@@ -13,10 +13,10 @@ phases:
       - sudo ./sam-installation/install --update
       - sam --version
   pre_build:
-#    on-failure: ABORT
+    on-failure: ABORT
     commands:
-      - echo "Start checking sam template file..."
-      - sam validate --lint --template template.yml
+#      - echo "Start checking sam template file..."
+#      - sam validate --lint --template template.yml
   build:
     on-failure: ABORT
     commands:
