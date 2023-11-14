@@ -67,7 +67,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: !Sub ${LambdaFunctionName1}
-      CodeUri: functions/bo01-indev-bcpf-check-file-lambda/
+      CodeUri: !Join [ "", [ "functions/", !Ref LambdaFunctionName1, "/" ] ]
       Handler: lambda_function.lambda_handler
       Role: !GetAtt LambdaExecutionRole1.Arn
       Runtime: python3.10
