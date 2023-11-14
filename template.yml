@@ -52,7 +52,7 @@ Resources:
       CompatibleArchitectures: 
         - x86_64
       CompatibleRuntimes: 
-        - python3.10
+        - python3.11
       ContentUri: layer/psycopg2/
   LambdaLayer2:
     Type: "AWS::Serverless::LayerVersion"
@@ -62,7 +62,7 @@ Resources:
       CompatibleArchitectures: 
         - x86_64
       CompatibleRuntimes: 
-        - python3.10
+        - python3.11
       ContentUri: layer/openpyxl/
       
 #LambdaSAM
@@ -73,7 +73,7 @@ Resources:
       CodeUri: !Ref LambdaFunctionNameDir1
       Handler: lambda_function.lambda_handler
       Role: !GetAtt LambdaExecutionRole1.Arn
-      Runtime: python3.10
+      Runtime: python3.11
       Architectures: 
         - x86_64
       MemorySize: 128
