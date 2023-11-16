@@ -24,7 +24,7 @@ Parameters:
   EcsContainerName1:
     Description: '定点バッチ用ECSコンテナ'
     Type: String
-    Default: 2175051-batch-container'
+    Default: '2175051-batch-container'
   EcrName1:
     Description: '定点バッチ用ECR'
     Type: String
