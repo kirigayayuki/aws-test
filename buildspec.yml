@@ -1,8 +1,10 @@
 version: 0.2
 env:
   variables:
-    S3_BUCKET: "2175051-sf-cicd-test-bucket"
+    ACCOUNT_ID: "477460359712"
     AWS_REGION: "ap-northeast-1"
+    REPOSITORY_URI: "477460359712.dkr.ecr.ap-northeast-1.amazonaws.com/2175051_ecs-test"
+    ECS_SRCDIR: "bo01-indev-bcpf-batch-task"
 
 phases:
   install:
@@ -14,14 +16,21 @@ phases:
       - sam --version
   pre_build:
     on-failure: ABORT
-    commands:
-#      - echo "Start checking sam template file..."
-#      - sam validate --lint --template template.yml
+      - echo "ECR login..."
+      - aws ecr get-login-password | docker login --username AWS --password-stdin https://${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+      - echo "Start checking sam template file..."
+      - cd ${CODEBUILD_SRC_DIR_SourceArtifact}
+      - sam validate --lint --template template.yml
   build:
     on-failure: ABORT
     commands:
-      - echo "Start deploying Statemachine And Lambda Function..."
-#      - sam build
+      - echo "Start image building..."
+      - cd ecs/${ECS_SRCDIR}
+      - docker build -f ./Dockerfile -t ${REPOSITORY_URI}:latest .
+      - docker tag ${REPOSITORY_URI}:latest ${REPOSITORY_URI}:latest
+      - echo "Writing image definitions file..."
+      - docker push ${REPOSITORY_URI}:latest
+      - echo "Start deploying Statemachine and ECS..."
       - sam deploy --no-confirm-changeset --no-fail-on-empty-changeset
   post_build:
     on-failure: ABORT
