@@ -17,7 +17,7 @@ phases:
   pre_build:
     on-failure: ABORT
       - echo "ECR login..."
-      - aws ecr get-login-password | docker login --username AWS --password-stdin https://${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+      - aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
       - echo "Start checking sam template file..."
       - cd ${CODEBUILD_SRC_DIR_SourceArtifact}
       - sam validate --lint --template template.yml
