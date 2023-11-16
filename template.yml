@@ -54,8 +54,8 @@ Resources:
               awslogs-group: !Sub ${EcsContainerName1}-lg
               awslogs-stream-prefix: ecs
           Environment:  ################設定例
-            - name: KeyName
-              value: Value
+            - Name: KeyName
+              Value: Value
       Tags: 
         - Key: Name
           Value: !Sub ${EcsTaskName1}
