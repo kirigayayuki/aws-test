@@ -45,7 +45,8 @@ Resources:
     Properties:
       LayerName: !Sub ${LambdaLayerName1}
       Description: !Sub ${LambdaLayerName1}
-      CompatibleArchitectures: x86_64
+      CompatibleArchitectures: 
+        - x86_64
       CompatibleRuntimes: 
         - python3.11
       ContentUri: layer/psycopg2
@@ -54,7 +55,8 @@ Resources:
     Properties:
       LayerName: !Sub ${LambdaLayerName2}
       Description: !Sub ${LambdaLayerName2}
-      CompatibleArchitectures: x86_64
+      CompatibleArchitectures: 
+        - x86_64
       CompatibleRuntimes: 
         - python3.11
       ContentUri: layer/openpyxl
@@ -79,8 +81,7 @@ Resources:
           - !Sub ${PrivateSubnet1}
           - !Sub ${PrivateSubnet2}
       Tags: 
-        - Key: Name
-          Value: !Sub ${LambdaFunctionName1}
+        Name: !Sub ${LambdaFunctionName1}
       Layers: 
         - !Ref LambdaLayer1
         - !Ref LambdaLayer2
