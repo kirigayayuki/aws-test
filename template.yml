@@ -55,7 +55,7 @@ Resources:
               awslogs-stream-prefix: ecs
           Environment:  ################設定例
             - Name: SSMParam
-              ValueFrom: arn:aws:ssm:ap-northeast-1:477460359712:parameter/2175051_paramTest
+              Valuefrom: arn:aws:ssm:ap-northeast-1:477460359712:parameter/2175051_paramTest
       Tags: 
         - Key: Name
           Value: !Sub ${EcsTaskName1}
