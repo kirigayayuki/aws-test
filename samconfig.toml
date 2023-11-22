@@ -1,9 +1,11 @@
 version = 0.1
 [default.deploy.parameters]
-stack_name = "sam-ecs-deploy-test"
+stack_name = "sam-deploy-test"
 s3_bucket = "2175051-sf-cicd-test-bucket"
 s3_prefix = "sam"
 region = "ap-northeast-1"
 confirm_changeset = true
 capabilities = "CAPABILITY_NAMED_IAM"
+disable_rollback = true
+parameter_overrides = "StateMachine1Name=\"2175051-CFn-testStatemachine-lower1\" StateMachine2Name=\"2175051-CFn-testStatemachine-lower2\" StateMachine3Name=\"2175051-CFn-testStatemachine-upper\" LambdaFunction1Name=\"2175051-CFn-testLambda-1\" LambdaFunction2Name=\"2175051-CFn-testLambda-2\" LambdaFunction3Name=\"2175051-CFn-testLambda-3\""
 image_repositories = []
