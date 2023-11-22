@@ -53,9 +53,9 @@ Resources:
               awslogs-region: ap-northeast-1
               awslogs-group: !Sub ${EcsContainerName1}-lg
               awslogs-stream-prefix: ecs
-          Environment:  ################設定例
+          Secrets:  ################設定例
             - Name: SSMParam
-              Valuefrom: arn:aws:ssm:ap-northeast-1:477460359712:parameter/2175051_paramTest
+              ValueFrom: arn:aws:ssm:ap-northeast-1:477460359712:parameter/2175051_paramTest
       Tags: 
         - Key: Name
           Value: !Sub ${EcsTaskName1}
