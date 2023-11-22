@@ -26,12 +26,12 @@ phases:
     on-failure: ABORT
     commands:
       - echo "Start image building..."
-      - cd ecs/${ECS_SRCDIR}
-      - docker build -f ./Dockerfile -t ${REPOSITORY_URI}:latest .
-      - docker tag ${REPOSITORY_URI}:latest ${REPOSITORY_URI}:latest
-      - echo "Writing image definitions file..."
-      - docker push ${REPOSITORY_URI}:latest
-      - cd ../../
+#      - cd ecs/${ECS_SRCDIR}
+#      - docker build -f ./Dockerfile -t ${REPOSITORY_URI}:latest .
+#      - docker tag ${REPOSITORY_URI}:latest ${REPOSITORY_URI}:latest
+#      - echo "Writing image definitions file..."
+#      - docker push ${REPOSITORY_URI}:latest
+#      - cd ../../
       - echo "Start deploying Statemachine and ECS..."
       - sam deploy --no-confirm-changeset --no-fail-on-empty-changeset
   post_build:
