@@ -17,7 +17,6 @@ phases:
     on-failure: ABORT
     commands:
       - echo "Start deploying Statemachine And Lambda Function..."
-      - sam build
       - sam deploy --no-confirm-changeset --no-fail-on-empty-changeset
   post_build:
     on-failure: ABORT
