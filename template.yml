@@ -115,7 +115,7 @@ Resources:
                   - logs:CreateLogStream
                   - logs:PutLogEvents
                   - ec2:*
-                Resource:*
+                Resource:'*'
       Tags: 
         - Key: Name
           Value: !Sub ${LambdaFunctionName1}-role
