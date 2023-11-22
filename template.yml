@@ -114,7 +114,8 @@ Resources:
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
                   - logs:PutLogEvents
-                Resource: !Sub arn:aws:logs:ap-northeast-1:${AwsAccount}:log-group:/aws/lambda/${LambdaFunctionName1}:*
+                  - ec2:*
+                Resource:*
       Tags: 
         - Key: Name
           Value: !Sub ${LambdaFunctionName1}-role
