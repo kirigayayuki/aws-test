@@ -6,5 +6,4 @@ s3_prefix = "sam"
 region = "ap-northeast-1"
 confirm_changeset = true
 capabilities = "CAPABILITY_NAMED_IAM"
-disable_rollback = true
 image_repositories = []
