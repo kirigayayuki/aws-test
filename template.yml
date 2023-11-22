@@ -1,5 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
+Description: "Batch Resource Template"
 Mappings:
   TagsMap:
     EnvName:
@@ -10,112 +11,55 @@ Parameters:
     Description: 'AWSアカウント番号'
     Type: String
     Default: '477460359712'
-  PrivateSubnet1:
-    Description: 'プライベートサブネット1'
-    Type: String
-    Default: 'subnet-08b3b53b973fe0d23'
-  PrivateSubnet2:
-    Description: 'プライベートサブネット2'
-    Type: String
-    Default: 'subnet-08505629ae83788fc'
-  LambdaSG:
-    Description: '仮LambdaSG'
-    Type: String
-    Default: 'sg-05dff090a9b6c7292'
-    
-    
-  LambdaFunctionName1:
-    Description: 'testLambda'
-    Type: String
-    Default: '2175051-test-lambda'
 
-  LambdaLayerName1:
-    Description: 'psycopg2用レイヤー'
+  ECSCommonRole:
+    Description: 'ECS共通IAMロール'
     Type: String
-    Default: 'psycopg2'
-  LambdaLayerName2:
-    Description: 'openpyxl用レイヤー'
+    Default: 'ecsTaskExecutionRole'
+
+  EcsTaskName1:
+    Description: '定点バッチ用ECSタスク'
     Type: String
-    Default: 'openpyxl'
-    
+    Default: '2175051-batch-task'
+  EcsContainerName1:
+    Description: '定点バッチ用ECSコンテナ'
+    Type: String
+    Default: '2175051-batch-container'
+  EcrName1:
+    Description: '定点バッチ用ECR'
+    Type: String
+    Default: '2175051_ecs-test'
+
 Resources:
-#Lambda Layer作成
-  LambdaLayer1:
-    Type: "AWS::Serverless::LayerVersion"
+  #ECSTask      
+  ECSTask1:
+    Type: AWS::ECS::TaskDefinition
     Properties:
-      LayerName: !Sub ${LambdaLayerName1}
-      Description: !Sub ${LambdaLayerName1}
-      CompatibleArchitectures: 
-        - x86_64
-      CompatibleRuntimes: 
-        - python3.11
-      ContentUri: layer/psycopg2
-  LambdaLayer2:
-    Type: "AWS::Serverless::LayerVersion"
-    Properties:
-      LayerName: !Sub ${LambdaLayerName2}
-      Description: !Sub ${LambdaLayerName2}
-      CompatibleArchitectures: 
-        - x86_64
-      CompatibleRuntimes: 
-        - python3.11
-      ContentUri: layer/openpyxl
-      
-#LambdaSAM
-  LambdaFunction1:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName: !Sub ${LambdaFunctionName1}
-      CodeUri: functions/task1/
-      Handler: lambda_function.lambda_handler
-      Role: !GetAtt LambdaExecutionRole1.Arn
-      Runtime: python3.11
-      Architectures: 
-        - x86_64
-      MemorySize: 128
-      EphemeralStorage:
-        Size: 512
-      Timeout: 30
-      VpcConfig: 
-        SecurityGroupIds:
-          - !Sub ${LambdaSG} ###### 暫定でdefault
-        SubnetIds:
-          - !Sub ${PrivateSubnet1}
-          - !Sub ${PrivateSubnet2}
-      Tags: 
-        Name: !Sub ${LambdaFunctionName1}
-      Layers: 
-        - !Ref LambdaLayer1
-        - !Ref LambdaLayer2
-      Environment: 
-        Variables:
-          KeyName1: Value1
-          KeyName2: Value2
-
-#IAM
-  LambdaExecutionRole1:
-    Type: AWS::IAM::Role
-    Properties:
-      RoleName : !Sub ${LambdaFunctionName1}-role
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: lambda.amazonaws.com
-            Action: sts:AssumeRole
-      Policies:
-        - PolicyName: !Sub ${LambdaFunctionName1}-policy
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action:
-                  - logs:CreateLogGroup
-                  - logs:CreateLogStream
-                  - logs:PutLogEvents
-                  - ec2:*
-                Resource: '*'
+      Cpu: 256
+      ExecutionRoleArn: !Sub arn:aws:iam::${AwsAccount}:role/${ECSCommonRole}
+      Family: !Sub ${EcsTaskName1}
+      Memory: 512
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      TaskRoleArn: !Sub arn:aws:iam::${AwsAccount}:role/${ECSCommonRole}
+      ContainerDefinitions:
+        - Image: !Sub ${AwsAccount}.dkr.ecr.ap-northeast-1.amazonaws.com/${EcrName1}:latest
+          Essential: true
+          Name: !Sub ${EcsContainerName1}
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-region: ap-northeast-1
+              awslogs-group: !Sub ${EcsContainerName1}-lg
+              awslogs-stream-prefix: ecs
+          Environment:  ################設定例
+            - Name: SSMParam
+              ValueFrom: arn:aws:ssm:ap-northeast-1:477460359712:parameter/2175051_paramTest
       Tags: 
         - Key: Name
-          Value: !Sub ${LambdaFunctionName1}-role
+          Value: !Sub ${EcsTaskName1}
+        - Key: Environment
+          Value: !FindInMap [ TagsMap, EnvName, Environment ]
+        - Key: Service
+          Value: !FindInMap [ TagsMap, EnvName, Service ]
