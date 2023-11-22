@@ -9,19 +9,19 @@ Parameters:
   AwsAccount:
     Description: 'AWSアカウント番号'
     Type: String
-    Default: '478226885022'
+    Default: '477460359712'
   PrivateSubnet1:
     Description: 'プライベートサブネット1'
     Type: String
-    Default: 'subnet-0a476ad6425870c82'
+    Default: 'subnet-08b3b53b973fe0d23'
   PrivateSubnet2:
     Description: 'プライベートサブネット2'
     Type: String
-    Default: 'subnet-03bc7d3cd442d35a5'
+    Default: 'subnet-08505629ae83788fc'
   LambdaSG:
     Description: '仮LambdaSG'
     Type: String
-    Default: 'sg-0eb7c9d0e102b9cee'
+    Default: 'sg-05dff090a9b6c7292'
     
     
   LambdaFunctionName1:
