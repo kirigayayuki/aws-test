@@ -1,39 +1,23 @@
 version: 0.2
 env:
   variables:
-    ACCOUNT_ID: "477460359712"
-    AWS_REGION: "ap-northeast-1"
-    REPOSITORY_URI: "477460359712.dkr.ecr.ap-northeast-1.amazonaws.com/2175051_ecs-test"
-    ECS_SRCDIR: "bo01-indev-bcpf-batch-task"
-
+    S3_BUCKET: "2175051-sf-cicd-test-bucket/glue"
+    
 phases:
   install:
     commands:
-      - echo Install phase
-      - wget https://github.com/aws/aws-sam-cli/releases/latest/download/aws-sam-cli-linux-x86_64.zip
-      - unzip aws-sam-cli-linux-x86_64.zip -d sam-installation
-      - sudo ./sam-installation/install --update
-      - sam --version
+      - echo No Install phase
   pre_build:
     on-failure: ABORT
     commands:
-      - echo "ECR login..."
-      - aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
-      - echo "Start checking sam template file..."
-#      - cd ${CODEBUILD_SRC_DIR_SourceArtifact}
-      - sam validate --lint --template template.yml
+      - aws cloudformation validate-template --template-body file://template.yml
   build:
     on-failure: ABORT
     commands:
-      - echo "Start image building..."
-#      - cd ecs/${ECS_SRCDIR}
-#      - docker build -f ./Dockerfile -t ${REPOSITORY_URI}:latest .
-#      - docker tag ${REPOSITORY_URI}:latest ${REPOSITORY_URI}:latest
-#      - echo "Writing image definitions file..."
-#      - docker push ${REPOSITORY_URI}:latest
-#      - cd ../../
-      - echo "Start deploying Statemachine and ECS..."
-      - sam deploy --no-confirm-changeset --no-fail-on-empty-changeset
+      - echo "Uploading Glue Script..."
+      - sh glue_script_upload.sh
+      - echo "Deploying Glue Script..."
+      - aws cloudformation deploy --template template.yml
   post_build:
     on-failure: ABORT
     commands:
