@@ -1,11 +1,39 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: AWS Glue Job Stack
+Mappings:
+  TagsMap:
+    EnvName:
+      Environment: "Indev"
+      Service: "bcpf"
+Parameters:
+  AwsAccount:
+    Description: 'AWSアカウント番号'
+    Type: String
+    Default: '477460359712'
+
+  GlueCommonRole:
+    Description: 'GlueJob共通IAMロール'
+    Type: String
+    Default: '2175051-testGlueRole'
+
+  GlueJobName1:
+    Description: 'GlueJob名1'
+    Type: String
+    Default: '2175051-CFnTest-GlueJob1'
+  GlueJobName2:
+    Description: 'GlueJob名2'
+    Type: String
+    Default: '2175051-CFnTest-GlueJob2'
+  GlueJobName3:
+    Description: 'GlueJob名3'
+    Type: String
+    Default: '2175051-CFnTest-GlueJob3'
 Resources:
   GlueJob1:
     Type: AWS::Glue::Job
     Properties:
-      Name: 2175051-CFnTest-GlueJob1
-      Role: arn:aws:iam::477460359712:role/2175051-testGlueRole
+      Name: !Sub ${GlueJobName1}
+      Role: arn:aws:iam::${AwsAccount}:role/${GlueCommonRole}
       Command:
         Name: pythonshell
         ScriptLocation: s3://2175051-sf-cicd-test-bucket/glue/2175051-CFnTestJob1/glue_script.py
@@ -16,11 +44,21 @@ Resources:
       DefaultArguments:
         '--TempDir': 's3://2175051-sf-cicd-test-bucket/glue/tmp/'
         '--PythonLibPath': 's3://2175051-sf-cicd-test-bucket/glue/lib/glue_script.py'
+      JobParameters:
+        key1: value1
+        key2: value2
+      Tags: 
+        - Key: Name
+          Value: !Sub ${GlueJobName1}
+        - Key: Environment
+          Value: !FindInMap [ TagsMap, EnvName, Environment ]
+        - Key: Service
+          Value: !FindInMap [ TagsMap, EnvName, Service ]
   GlueJob2:
     Type: AWS::Glue::Job
     Properties:
-      Name: 2175051-CFnTest-GlueJob2
-      Role: arn:aws:iam::477460359712:role/2175051-testGlueRole
+      Name: !Sub ${GlueJobName2}
+      Role: arn:aws:iam::${AwsAccount}:role/${GlueCommonRole}
       Command:
         Name: pythonshell
         ScriptLocation: s3://2175051-sf-cicd-test-bucket/glue/2175051-CFnTestJob2/glue_script.py
@@ -31,11 +69,21 @@ Resources:
       DefaultArguments:
         '--TempDir': 's3://2175051-sf-cicd-test-bucket/glue/tmp/'
         '--PythonLibPath': 's3://2175051-sf-cicd-test-bucket/glue/lib/glue_script.py'
+      JobParameters:
+        key1: value1
+        key2: value2
+      Tags: 
+        - Key: Name
+          Value: !Sub ${GlueJobName2}
+        - Key: Environment
+          Value: !FindInMap [ TagsMap, EnvName, Environment ]
+        - Key: Service
+          Value: !FindInMap [ TagsMap, EnvName, Service ]
   GlueJob3:
     Type: AWS::Glue::Job
     Properties:
-      Name: 2175051-CFnTest-GlueJob3
-      Role: arn:aws:iam::477460359712:role/2175051-testGlueRole
+      Name: !Sub ${GlueJobName3}
+      Role: arn:aws:iam::${AwsAccount}:role/${GlueCommonRole}
       Command:
         Name: pythonshell
         ScriptLocation: s3://2175051-sf-cicd-test-bucket/glue/2175051-CFnTestJob3/glue_script.py
@@ -46,4 +94,13 @@ Resources:
       DefaultArguments:
         '--TempDir': 's3://2175051-sf-cicd-test-bucket/glue/tmp/'
         '--PythonLibPath': 's3://2175051-sf-cicd-test-bucket/glue/lib/glue_script.py'
-        
+      JobParameters:
+        key1: value1
+        key2: value2
+      Tags: 
+        - Key: Name
+          Value: !Sub ${GlueJobName3}
+        - Key: Environment
+          Value: !FindInMap [ TagsMap, EnvName, Environment ]
+        - Key: Service
+          Value: !FindInMap [ TagsMap, EnvName, Service ]
