@@ -43,10 +43,7 @@ Resources:
         MaxConcurrentRuns: 5
       DefaultArguments:
         '--TempDir': 's3://2175051-sf-cicd-test-bucket/glue/tmp/'
-        '--PythonLibPath': 's3://2175051-sf-cicd-test-bucket/glue/lib/glue_script.py'
-      JobParameters:
-        key1: value1
-        key2: value2
+        '--extra-py-files': 's3://2175051-sf-cicd-test-bucket/glue/lib/glue_script.py'
       Tags: 
         - Key: Name
           Value: !Sub ${GlueJobName1}
@@ -68,10 +65,7 @@ Resources:
         MaxConcurrentRuns: 5
       DefaultArguments:
         '--TempDir': 's3://2175051-sf-cicd-test-bucket/glue/tmp/'
-        '--PythonLibPath': 's3://2175051-sf-cicd-test-bucket/glue/lib/glue_script.py'
-      JobParameters:
-        key1: value1
-        key2: value2
+        '--extra-py-files': 's3://2175051-sf-cicd-test-bucket/glue/lib/glue_script.py'
       Tags: 
         - Key: Name
           Value: !Sub ${GlueJobName2}
@@ -93,10 +87,7 @@ Resources:
         MaxConcurrentRuns: 5
       DefaultArguments:
         '--TempDir': 's3://2175051-sf-cicd-test-bucket/glue/tmp/'
-        '--PythonLibPath': 's3://2175051-sf-cicd-test-bucket/glue/lib/glue_script.py'
-      JobParameters:
-        key1: value1
-        key2: value2
+        '--extra-py-files': 's3://2175051-sf-cicd-test-bucket/glue/lib/glue_script.py'
       Tags: 
         - Key: Name
           Value: !Sub ${GlueJobName3}
