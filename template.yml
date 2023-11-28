@@ -31,6 +31,10 @@ Parameters:
     Description: 'GlueJob名3'
     Type: String
     Default: '2175051-CFnTest-GlueJob3'
+  GlueJobName4:
+    Description: 'GlueJob名4'
+    Type: String
+    Default: '2175051-CFnTest-GlueJob4'
 Resources:
   GlueJob1:
     Type: AWS::Glue::Job
@@ -98,4 +102,25 @@ Resources:
         Name: !Sub ${GlueJobName3}
         Environment: !FindInMap [ TagsMap, EnvName, Environment ]
         Service: !FindInMap [ TagsMap, EnvName, Service ]
-        
+  GlueJob4:
+    Type: AWS::Glue::Job
+    Properties:
+      Name: !Sub ${GlueJobName4}
+      Role: !Sub arn:aws:iam::${AwsAccount}:role/${GlueCommonRole}
+      Command:
+        Name: pythonshell
+        ScriptLocation: s3://2175051-sf-cicd-test-bucket/glue/2175051-CFnTestJob4/glue_script.py
+      MaxRetries: 0
+      Timeout: 5
+      ExecutionProperty:
+        MaxConcurrentRuns: 5
+      Connections:
+        Connections:
+        - !Sub ${GlueConnectionName}
+      DefaultArguments:
+        '--TempDir': 's3://2175051-sf-cicd-test-bucket/glue/tmp/'
+        '--extra-py-files': 's3://2175051-sf-cicd-test-bucket/glue/lib/glue_script.py'
+      Tags: 
+        Name: !Sub ${GlueJobName4}
+        Environment: !FindInMap [ TagsMap, EnvName, Environment ]
+        Service: !FindInMap [ TagsMap, EnvName, Service ]
