@@ -45,12 +45,9 @@ Resources:
         '--TempDir': 's3://2175051-sf-cicd-test-bucket/glue/tmp/'
         '--extra-py-files': 's3://2175051-sf-cicd-test-bucket/glue/lib/glue_script.py'
       Tags: 
-        - Key: Name
-          Value: !Sub ${GlueJobName1}
-        - Key: Environment
-          Value: !FindInMap [ TagsMap, EnvName, Environment ]
-        - Key: Service
-          Value: !FindInMap [ TagsMap, EnvName, Service ]
+        Name: !Sub ${GlueJobName1}
+        Environment !FindInMap [ TagsMap, EnvName, Environment ]
+        Service: !FindInMap [ TagsMap, EnvName, Service ]
   GlueJob2:
     Type: AWS::Glue::Job
     Properties:
@@ -67,12 +64,9 @@ Resources:
         '--TempDir': 's3://2175051-sf-cicd-test-bucket/glue/tmp/'
         '--extra-py-files': 's3://2175051-sf-cicd-test-bucket/glue/lib/glue_script.py'
       Tags: 
-        - Key: Name
-          Value: !Sub ${GlueJobName2}
-        - Key: Environment
-          Value: !FindInMap [ TagsMap, EnvName, Environment ]
-        - Key: Service
-          Value: !FindInMap [ TagsMap, EnvName, Service ]
+        Name: !Sub ${GlueJobName2}
+        Environment !FindInMap [ TagsMap, EnvName, Environment ]
+        Service: !FindInMap [ TagsMap, EnvName, Service ]
   GlueJob3:
     Type: AWS::Glue::Job
     Properties:
@@ -89,9 +83,6 @@ Resources:
         '--TempDir': 's3://2175051-sf-cicd-test-bucket/glue/tmp/'
         '--extra-py-files': 's3://2175051-sf-cicd-test-bucket/glue/lib/glue_script.py'
       Tags: 
-        - Key: Name
-          Value: !Sub ${GlueJobName3}
-        - Key: Environment
-          Value: !FindInMap [ TagsMap, EnvName, Environment ]
-        - Key: Service
-          Value: !FindInMap [ TagsMap, EnvName, Service ]
+        Name: !Sub ${GlueJobName3}
+        Environment !FindInMap [ TagsMap, EnvName, Environment ]
+        Service: !FindInMap [ TagsMap, EnvName, Service ]
