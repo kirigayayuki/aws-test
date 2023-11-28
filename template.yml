@@ -13,6 +13,9 @@ Resources:
       Timeout: 5
       ExecutionProperty:
         MaxConcurrentRuns: 5
+      DefaultArguments:
+        '--TempDir': 's3://2175051-sf-cicd-test-bucket/glue/tmp/'
+        '--PythonLibPath': 's3://2175051-sf-cicd-test-bucket/glue/lib/glue_script.py'
   GlueJob2:
     Type: AWS::Glue::Job
     Properties:
@@ -25,6 +28,9 @@ Resources:
       Timeout: 5
       ExecutionProperty:
         MaxConcurrentRuns: 5
+      DefaultArguments:
+        '--TempDir': 's3://2175051-sf-cicd-test-bucket/glue/tmp/'
+        '--PythonLibPath': 's3://2175051-sf-cicd-test-bucket/glue/lib/glue_script.py'
   GlueJob3:
     Type: AWS::Glue::Job
     Properties:
@@ -37,3 +43,7 @@ Resources:
       Timeout: 5
       ExecutionProperty:
         MaxConcurrentRuns: 5
+      DefaultArguments:
+        '--TempDir': 's3://2175051-sf-cicd-test-bucket/glue/tmp/'
+        '--PythonLibPath': 's3://2175051-sf-cicd-test-bucket/glue/lib/glue_script.py'
+        
