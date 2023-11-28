@@ -17,7 +17,7 @@ phases:
       - echo "Uploading Glue Script..."
       - sh glue_script_upload.sh
       - echo "Deploying Glue Script..."
-      - aws cloudformation deploy --template template.yml
+      - aws cloudformation deploy --template template.yml --stack-name glue-cfn-test-deploy
   post_build:
     on-failure: ABORT
     commands:
