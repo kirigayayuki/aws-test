@@ -46,7 +46,7 @@ Resources:
         '--extra-py-files': 's3://2175051-sf-cicd-test-bucket/glue/lib/glue_script.py'
       Tags: 
         Key: Name
-        Value !Sub ${GlueJobName1}
+        Value: !Sub ${GlueJobName1}
 
   GlueJob2:
     Type: AWS::Glue::Job
