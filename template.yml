@@ -104,6 +104,7 @@ Resources:
         Service: !FindInMap [ TagsMap, EnvName, Service ]
   GlueJob4:
     Type: AWS::Glue::Job
+    DeletionPolicy: 'Retain'
     Properties:
       Name: !Sub ${GlueJobName4}
       Role: !Sub arn:aws:iam::${AwsAccount}:role/${GlueCommonRole}
