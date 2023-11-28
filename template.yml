@@ -33,7 +33,7 @@ Resources:
     Type: AWS::Glue::Job
     Properties:
       Name: !Sub ${GlueJobName1}
-      Role: arn:aws:iam::${AwsAccount}:role/${GlueCommonRole}
+      Role: !Sub arn:aws:iam::${AwsAccount}:role/${GlueCommonRole}
       Command:
         Name: pythonshell
         ScriptLocation: s3://2175051-sf-cicd-test-bucket/glue/2175051-CFnTestJob1/glue_script.py
@@ -52,7 +52,7 @@ Resources:
     Type: AWS::Glue::Job
     Properties:
       Name: !Sub ${GlueJobName2}
-      Role: arn:aws:iam::${AwsAccount}:role/${GlueCommonRole}
+      Role: !Sub arn:aws:iam::${AwsAccount}:role/${GlueCommonRole}
       Command:
         Name: pythonshell
         ScriptLocation: s3://2175051-sf-cicd-test-bucket/glue/2175051-CFnTestJob2/glue_script.py
@@ -68,7 +68,7 @@ Resources:
     Type: AWS::Glue::Job
     Properties:
       Name: !Sub ${GlueJobName3}
-      Role: arn:aws:iam::${AwsAccount}:role/${GlueCommonRole}
+      Role: !Sub arn:aws:iam::${AwsAccount}:role/${GlueCommonRole}
       Command:
         Name: pythonshell
         ScriptLocation: s3://2175051-sf-cicd-test-bucket/glue/2175051-CFnTestJob3/glue_script.py
