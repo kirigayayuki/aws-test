@@ -28,6 +28,3 @@ phases:
     on-failure: ABORT
     commands:
       - echo Build completed on `date`
-cache:
-  paths:
-     - '/root/sam-installation/**/*'
