@@ -30,4 +30,4 @@ phases:
       - echo Build completed on `date`
 cache:
   paths:
-     - './*/*/**'
+     - '/root/sam-installation/**/*'
