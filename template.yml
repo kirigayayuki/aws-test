@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: AWS Glue Job Stack
+Transform: AWS::Serverless-2016-10-31
 Mappings:
   TagsMap:
     EnvName:
@@ -10,118 +10,112 @@ Parameters:
     Description: 'AWSアカウント番号'
     Type: String
     Default: '477460359712'
+  PrivateSubnet1:
+    Description: 'プライベートサブネット1'
+    Type: String
+    Default: 'subnet-08b3b53b973fe0d23'
+  PrivateSubnet2:
+    Description: 'プライベートサブネット2'
+    Type: String
+    Default: 'subnet-08505629ae83788fc'
+  LambdaSG:
+    Description: '仮LambdaSG'
+    Type: String
+    Default: 'sg-05dff090a9b6c7292'
+    
+    
+  LambdaFunctionName1:
+    Description: 'testLambda'
+    Type: String
+    Default: '2175051-test-lambda'
 
-  GlueCommonRole:
-    Description: 'GlueJob共通IAMロール'
+  LambdaLayerName1:
+    Description: 'psycopg2用レイヤー'
     Type: String
-    Default: '2175051-testGlueRole'
-  GlueConnectionName:
-    Description: 'Glue接続名'
+    Default: 'psycopg2'
+  LambdaLayerName2:
+    Description: 'openpyxl用レイヤー'
     Type: String
-    Default: 'aurora_connection'
-  GlueJobName1:
-    Description: 'GlueJob名1'
-    Type: String
-    Default: '2175051-CFnTest-GlueJob1'
-  GlueJobName2:
-    Description: 'GlueJob名2'
-    Type: String
-    Default: '2175051-CFnTest-GlueJob2'
-  GlueJobName3:
-    Description: 'GlueJob名3'
-    Type: String
-    Default: '2175051-CFnTest-GlueJob3'
-  GlueJobName4:
-    Description: 'GlueJob名4'
-    Type: String
-    Default: '2175051-CFnTest-GlueJob4'
+    Default: 'openpyxl'
+    
 Resources:
-  GlueJob1:
-    Type: AWS::Glue::Job
+#Lambda Layer作成
+  LambdaLayer1:
+    Type: "AWS::Serverless::LayerVersion"
     Properties:
-      Name: !Sub ${GlueJobName1}
-      Role: !Sub arn:aws:iam::${AwsAccount}:role/${GlueCommonRole}
-      Command:
-        Name: pythonshell
-        ScriptLocation: s3://2175051-sf-cicd-test-bucket/glue/2175051-CFnTestJob1/glue_script.py
-      MaxRetries: 0
-      Timeout: 5
-      ExecutionProperty:
-        MaxConcurrentRuns: 5
-      Connections:
-        Connections:
-        - !Sub ${GlueConnectionName}
-      DefaultArguments:
-        '--TempDir': 's3://2175051-sf-cicd-test-bucket/glue/tmp/'
-        '--extra-py-files': 's3://2175051-sf-cicd-test-bucket/glue/lib/glue_script.py'
-      Tags: 
-        Name: !Sub ${GlueJobName1}
-        Environment: !FindInMap [ TagsMap, EnvName, Environment ]
-        Service: !FindInMap [ TagsMap, EnvName, Service ]
-  GlueJob2:
-    Type: AWS::Glue::Job
+      LayerName: !Sub ${LambdaLayerName1}
+      Description: !Sub ${LambdaLayerName1}
+      CompatibleArchitectures: 
+        - x86_64
+      CompatibleRuntimes: 
+        - python3.11
+      ContentUri: layer/psycopg2
+  LambdaLayer2:
+    Type: "AWS::Serverless::LayerVersion"
     Properties:
-      Name: !Sub ${GlueJobName2}
-      Role: !Sub arn:aws:iam::${AwsAccount}:role/${GlueCommonRole}
-      Command:
-        Name: pythonshell
-        ScriptLocation: s3://2175051-sf-cicd-test-bucket/glue/2175051-CFnTestJob2/glue_script.py
-      MaxRetries: 0
-      Timeout: 5
-      ExecutionProperty:
-        MaxConcurrentRuns: 5
-      Connections:
-        Connections:
-        - !Sub ${GlueConnectionName}
-      DefaultArguments:
-        '--TempDir': 's3://2175051-sf-cicd-test-bucket/glue/tmp/'
-        '--extra-py-files': 's3://2175051-sf-cicd-test-bucket/glue/lib/glue_script.py'
-      Tags: 
-        Name: !Sub ${GlueJobName2}
-        Environment: !FindInMap [ TagsMap, EnvName, Environment ]
-        Service: !FindInMap [ TagsMap, EnvName, Service ]
-  GlueJob3:
-    Type: AWS::Glue::Job
+      LayerName: !Sub ${LambdaLayerName2}
+      Description: !Sub ${LambdaLayerName2}
+      CompatibleArchitectures: 
+        - x86_64
+      CompatibleRuntimes: 
+        - python3.11
+      ContentUri: layer/openpyxl
+      
+#LambdaSAM
+  LambdaFunction1:
+    Type: AWS::Serverless::Function
     Properties:
-      Name: !Sub ${GlueJobName3}
-      Role: !Sub arn:aws:iam::${AwsAccount}:role/${GlueCommonRole}
-      Command:
-        Name: pythonshell
-        ScriptLocation: s3://2175051-sf-cicd-test-bucket/glue/2175051-CFnTestJob3/glue_script.py
-      MaxRetries: 0
-      Timeout: 5
-      ExecutionProperty:
-        MaxConcurrentRuns: 5
-      Connections:
-        Connections:
-        - !Sub ${GlueConnectionName}
-      DefaultArguments:
-        '--TempDir': 's3://2175051-sf-cicd-test-bucket/glue/tmp/'
-        '--extra-py-files': 's3://2175051-sf-cicd-test-bucket/glue/lib/glue_script.py'
+      FunctionName: !Sub ${LambdaFunctionName1}
+      CodeUri: functions/task1/
+      Handler: lambda_function.lambda_handler
+      Role: !GetAtt LambdaExecutionRole1.Arn
+      Runtime: python3.11
+      Architectures: 
+        - x86_64
+      MemorySize: 128
+      EphemeralStorage:
+        Size: 512
+      Timeout: 30
+      VpcConfig: 
+        SecurityGroupIds:
+          - !Sub ${LambdaSG} ###### 暫定でdefault
+        SubnetIds:
+          - !Sub ${PrivateSubnet1}
+          - !Sub ${PrivateSubnet2}
       Tags: 
-        Name: !Sub ${GlueJobName3}
-        Environment: !FindInMap [ TagsMap, EnvName, Environment ]
-        Service: !FindInMap [ TagsMap, EnvName, Service ]
-  GlueJob4:
-    Type: AWS::Glue::Job
-    DeletionPolicy: 'Retain'
+        Name: !Sub ${LambdaFunctionName1}
+      Layers: 
+        - !Ref LambdaLayer1
+        - !Ref LambdaLayer2
+      Environment: 
+        Variables:
+          KeyName1: Value1
+          KeyName2: Value2
+
+#IAM
+  LambdaExecutionRole1:
+    Type: AWS::IAM::Role
     Properties:
-      Name: !Sub ${GlueJobName4}
-      Role: !Sub arn:aws:iam::${AwsAccount}:role/${GlueCommonRole}
-      Command:
-        Name: pythonshell
-        ScriptLocation: s3://2175051-sf-cicd-test-bucket/glue/2175051-CFnTestJob4/glue_script.py
-      MaxRetries: 0
-      Timeout: 5
-      ExecutionProperty:
-        MaxConcurrentRuns: 5
-      Connections:
-        Connections:
-        - !Sub ${GlueConnectionName}
-      DefaultArguments:
-        '--TempDir': 's3://2175051-sf-cicd-test-bucket/glue/tmp/'
-        '--extra-py-files': 's3://2175051-sf-cicd-test-bucket/glue/lib/glue_script.py'
+      RoleName : !Sub ${LambdaFunctionName1}-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: !Sub ${LambdaFunctionName1}-policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                  - ec2:*
+                Resource: '*'
       Tags: 
-        Name: !Sub ${GlueJobName4}
-        Environment: !FindInMap [ TagsMap, EnvName, Environment ]
-        Service: !FindInMap [ TagsMap, EnvName, Service ]
+        - Key: Name
+          Value: !Sub ${LambdaFunctionName1}-role
