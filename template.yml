@@ -38,6 +38,13 @@ Parameters:
     Type: String
     Default: 'openpyxl'
     
+  LambdaLayerName3:
+    Description: 'SSM取得用レイヤー'
+    Type: String
+    Default: 'AWS-Parameters-and-Secrets-Lambda-Extension:11'
+    
+
+    
 Resources:
 #Lambda Layer作成
   LambdaLayer1:
@@ -87,7 +94,7 @@ Resources:
       Layers: 
         - !Ref LambdaLayer1
         - !Ref LambdaLayer2
-        - AWS-Parameters-and-Secrets-Lambda-Extension
+        - !Sub arn:aws:lambda:ap-northeast-1:${AwsAccount}:layer:${LambdaLayerName3}
       Environment: 
         Variables:
           KeyName1: Value1
