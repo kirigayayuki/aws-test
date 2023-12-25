@@ -41,7 +41,7 @@ Parameters:
   LambdaLayerName3:
     Description: 'SSM取得用レイヤー'
     Type: String
-    Default: 'AWS-Parameters-and-Secrets-Lambda-Extension:11'
+    Default: 'arn:aws:lambda:ap-northeast-1:133490724326:layer:AWS-Parameters-and-Secrets-Lambda-Extension:11'
     
 
     
@@ -94,7 +94,7 @@ Resources:
       Layers: 
         - !Ref LambdaLayer1
         - !Ref LambdaLayer2
-        - !Sub arn:aws:lambda:ap-northeast-1:${AwsAccount}:layer:${LambdaLayerName3}
+        - !Sub ${LambdaLayerName3}
       Environment: 
         Variables:
           KeyName1: Value1
