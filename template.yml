@@ -87,6 +87,7 @@ Resources:
       Layers: 
         - !Ref LambdaLayer1
         - !Ref LambdaLayer2
+        - AWS-Parameters-and-Secrets-Lambda-Extension
       Environment: 
         Variables:
           KeyName1: Value1
