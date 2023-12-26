@@ -6,7 +6,7 @@
             "Name" : "pythonshell",
             "ScriptLocation": "s3://2175051-sf-cicd-test-bucket/glue/2175051-testJob1/glue_script.py"
         },
-        "DefaultArguments": {"--extra-py-files": "s3://2175051-sf-cicd-test-bucket/glue/lib/glue_script.py"
+        "DefaultArguments": {"--extra-py-files": "s3://2175051-sf-cicd-test-bucket/glue/lib/glue_script.py,s3://2175051-sf-cicd-test-bucket/glue/lib/glue_script2.py"
         }
     }
 }
