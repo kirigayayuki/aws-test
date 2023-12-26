@@ -50,5 +50,4 @@ do
     echo "Glue Job Deploy Error. GlueJobName=${JOB_NAME}, SourceFilePass=${JOB_DIR}${JOB_FILE}."
     exit 2
   fi
-  cd ../
 done
