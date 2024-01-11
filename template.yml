@@ -43,7 +43,10 @@ Parameters:
     Type: String
     Default: 'arn:aws:lambda:ap-northeast-1:133490724326:layer:AWS-Parameters-and-Secrets-Lambda-Extension:11'
     
-
+  StateMachineName1:
+    Description: 'ダウンロードファイル作成用ステートマシン'
+    Type: String
+    Default: '2175051-cfntest-statemachine'
     
 Resources:
 #Lambda Layer作成
@@ -127,3 +130,12 @@ Resources:
       Tags: 
         - Key: Name
           Value: !Sub ${LambdaFunctionName1}-role
+#StepFunctions 
+  StateMachine1:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      Name: !Sub ${StateMachineName1}
+      DefinitionUri: statemachine/upper_definition.json
+      Role: arn:aws:iam::477460359712:role/service-role/StepFunctions-2175051-test-MyStateMachine-role-0bxq48c31
+      Type: STANDARD
+
