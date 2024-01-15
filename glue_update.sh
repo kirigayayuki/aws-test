@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 #
-BUCKET='2175051-sf-cicd-test-bucket/glue/'
+#BUCKET='2175051-sf-cicd-test-bucket/glue/'
 JOB_PREFIX='source/'
 LIB_PREFIX='lib/'
 JOB_LIST='glue_job.lst'
