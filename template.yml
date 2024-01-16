@@ -107,7 +107,6 @@ Resources:
           KeyName1: Value1
           KeyName2: Value2
       Logging:
-        Level: INFO
         LogGroupName: /aws/lambda/2175051-logtest-sam-lambda-lg
 
   LambdaFunction2:
