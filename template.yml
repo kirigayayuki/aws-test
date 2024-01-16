@@ -129,8 +129,6 @@ Resources:
         SubnetIds:
           - !Sub ${PrivateSubnet1}
           - !Sub ${PrivateSubnet2}
-      Tags: 
-        Name: !Sub ${LambdaFunctionName2}
       Layers: 
         - !Ref LambdaLayer1
         - !Ref LambdaLayer2
