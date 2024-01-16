@@ -106,8 +106,7 @@ Resources:
         Variables:
           KeyName1: Value1
           KeyName2: Value2
-      LoggingConfig:
-        LogGroup: /aws/lambda/2175051-logtest-sam-lambda-lg
+
 
   LambdaFunction2:
     Type: AWS::Lambda::Function
