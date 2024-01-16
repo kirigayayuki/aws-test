@@ -106,7 +106,11 @@ Resources:
         Variables:
           KeyName1: Value1
           KeyName2: Value2
-
+      LoggingConfig:
+        ApplicationLogLevel: ERROR
+        LogFormat: JSON
+        LogGroup: /aws/lambda/2175051-logtest-lambda-lg
+        SystemLogLevel: INFO
 
   LambdaFunction2:
     Type: AWS::Lambda::Function
