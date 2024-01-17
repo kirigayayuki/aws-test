@@ -8,7 +8,7 @@
       "OutputPath": "$.Payload",
       "Parameters": {
         "Payload.$": "$",
-        "FunctionName": "arn:aws:lambda:ap-northeast-1:477460359712:function:2175051-test-task1-lambda:$LATEST"
+        "FunctionName": "${lambdaArn1}"
       },
       "Retry": [
         {
@@ -31,7 +31,7 @@
       "OutputPath": "$.Payload",
       "Parameters": {
         "Payload.$": "$",
-        "FunctionName": "arn:aws:lambda:ap-northeast-1:477460359712:function:2175051-test-task2-lambda:$LATEST"
+        "FunctionName": "${lambdaArn2}"
       },
       "Retry": [
         {

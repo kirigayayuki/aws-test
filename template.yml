@@ -28,10 +28,6 @@ Parameters:
     Description: 'testLambda'
     Type: String
     Default: '2175051-test-lambda'
-  LambdaFunctionName2:
-    Description: 'testLambda2'
-    Type: String
-    Default: '2175051-test-lambda2'
 
   LambdaLayerName1:
     Description: 'psycopg2用レイヤー'
@@ -51,6 +47,15 @@ Parameters:
     Description: 'ダウンロードファイル作成用ステートマシン'
     Type: String
     Default: '2175051-cfntest-statemachine'
+    
+  LambdaARN1:
+    Description: 'ステートマシン呼び出し先Lambda1'
+    Type: String
+    Default: 'arn:aws:lambda:ap-northeast-1:477460359712:function:2175051-test-task1-lambda:$LATEST'
+  LambdaARN2:
+    Description: 'ステートマシン呼び出し先Lambda2'
+    Type: String
+    Default: 'arn:aws:lambda:ap-northeast-1:477460359712:function:2175051-test-task2-lambda:$LATEST'
     
 Resources:
 #Lambda Layer作成
@@ -86,7 +91,7 @@ Resources:
       Runtime: python3.11
       Architectures: 
         - x86_64
-      MemorySize: 256
+      MemorySize: 128
       EphemeralStorage:
         Size: 512
       Timeout: 30
@@ -106,48 +111,7 @@ Resources:
         Variables:
           KeyName1: Value1
           KeyName2: Value2
-      LoggingConfig:
-        ApplicationLogLevel: ERROR
-        LogFormat: JSON
-        LogGroup: /aws/lambda/2175051-logtest-lambda-lg
-        SystemLogLevel: INFO
 
-  LambdaFunction2:
-    Type: AWS::Lambda::Function
-    Properties:
-      FunctionName: !Sub ${LambdaFunctionName2}
-      Code:
-        S3Bucket: 2175051-sf-cicd-test-bucket
-        S3Key: lambda.zip
-      Handler: lambda_function.lambda_handler
-      Role: !GetAtt LambdaExecutionRole1.Arn
-      Runtime: python3.11
-      Architectures: 
-        - x86_64
-      MemorySize: 128
-      EphemeralStorage:
-        Size: 512
-      Timeout: 30
-      VpcConfig: 
-        SecurityGroupIds:
-          - !Sub ${LambdaSG} ###### 暫定でdefault
-        SubnetIds:
-          - !Sub ${PrivateSubnet1}
-          - !Sub ${PrivateSubnet2}
-      Layers: 
-        - !Ref LambdaLayer1
-        - !Ref LambdaLayer2
-        - !Sub ${LambdaLayerName3}
-      Environment: 
-        Variables:
-          KeyName1: Value1
-          KeyName2: Value2
-      LoggingConfig:
-        ApplicationLogLevel: ERROR
-        LogFormat: JSON
-        LogGroup: /aws/lambda/2175051-logtest-lambda-lg
-        SystemLogLevel: INFO
-        
 #IAM
   LambdaExecutionRole1:
     Type: AWS::IAM::Role
@@ -180,7 +144,10 @@ Resources:
     Type: AWS::Serverless::StateMachine
     Properties:
       Name: !Sub ${StateMachineName1}
-      DefinitionUri: statemachine/upper_definition.json
+      DefinitionUri: statemachine/lower1_definition.json
+      DefinitionSubstitutions:
+        lambdaArn1: !Sub ${LambdaARN1}
+        lambdaArn2: !Sub ${LambdaARN2}
       Role: arn:aws:iam::477460359712:role/service-role/StepFunctions-2175051-test-MyStateMachine-role-0bxq48c31
       Type: STANDARD
 
