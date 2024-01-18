@@ -51,7 +51,7 @@ Parameters:
   LambdaARN1:
     Description: 'ステートマシン呼び出し先Lambda1'
     Type: String
-    Default: !Sub arn:aws:lambda:ap-northeast-1:${AwsAccount}:function:2175051-test-task1-lambda:$LATEST
+    Default: '2175051-test-task1-lambda'
   LambdaARN2:
     Description: 'ステートマシン呼び出し先Lambda2'
     Type: String
