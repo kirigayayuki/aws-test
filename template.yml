@@ -1,15 +1,15 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Mappings:
-  TagsMap:
-    EnvName:
-      Environment: "Indev"
-      Service: "bcpf"
+#Mappings:
+#  TagsMap:
+#    EnvName:
+#      Environment: "Indev"
+#      Service: "bcpf"
 Parameters:
-  AwsAccount:
-    Description: 'AWSアカウント番号'
-    Type: String
-    Default: '477460359712'
+#  AwsAccount:
+#    Description: 'AWSアカウント番号'
+#    Type: String
+#    Default: '477460359712'
   PrivateSubnet1:
     Description: 'プライベートサブネット1'
     Type: String
