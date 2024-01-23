@@ -17,7 +17,7 @@
           },
         "MaxRetries" : 1,
         "Timeout" : 2880,
-        "MaxCapacity" : 0.4, 
+        "MaxCapacity" : 0.0625, 
         "SecurityConfiguration" : "none",
         "DefaultArguments" : {
             "--TempDir" : "s3://2175051-sf-cicd-test-bucket/glue/tmp/glue_script.py",
