@@ -16,7 +16,6 @@
             "MaxConcurrentRuns": 1
           },
         "MaxRetries" : 1,
-        "AllocatedCapacity" : 1,
         "Timeout" : 2880,
         "MaxCapacity" : 5.0, 
         "SecurityConfiguration" : "none",
