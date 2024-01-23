@@ -4,8 +4,9 @@
         "Role" : "arn:aws:iam::477460359712:role/2175051-testGlueRole",
         "Command": {
             "Name" : "pythonshell",
+            "Runtime" : "python3.9",
             "ScriptLocation": "s3://2175051-sf-cicd-test-bucket/glue/2175051-testJob1/glue_script.py"
-        }
+        },
         "Connections" : {
             "Connections" : [
                 "aurora_connection"
@@ -14,6 +15,11 @@
         "ExecutionProperty": {
             "MaxConcurrentRuns": 1
           },
+        "MaxRetries" : 1,
+        "AllocatedCapacity" : 1,
+        "Timeout" : 2880,
+        "MaxCapacity" : 5.0, 
+        "SecurityConfiguration" : "none",
         "DefaultArguments" : {
             "--TempDir" : "s3://2175051-sf-cicd-test-bucket/glue/tmp/glue_script.py",
             "--extra-py-files": "s3://2175051-sf-cicd-test-bucket/glue/lib/glue_script.py,s3://2175051-sf-cicd-test-bucket/glue/lib/glue_script2.py",
