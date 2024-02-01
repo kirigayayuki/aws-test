@@ -4,7 +4,7 @@ phases:
   install:
     commands:
       - echo Install started on `date`
-      - yum -y install expect
+      - pip install git-remote-codecommit
   pre_build:
     commands:
       - echo No Pre Build phase
@@ -12,7 +12,10 @@ phases:
     on-failure: ABORT
     commands:
       - echo Build started on `date`
-      - sh git_connect.sh
+      - git clone codecommit::ap-northeast-1://2175051-test-repo
+      - pwd
+      - ls -l
+#      - sh git_connect.sh
   post_build:
     on-failure: ABORT
     commands:
