@@ -12,6 +12,8 @@ phases:
     on-failure: ABORT
     commands:
       - echo Build started on `date`
+      - git config --global user.email aws-codebuild
+      - git config --global user.name aws-codebuild
       - git config --global pull.rebase false
       - git clone codecommit::ap-northeast-3://2175051-test-dr-repo
       - cd 2175051-test-dr-repo
