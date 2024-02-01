@@ -16,6 +16,7 @@ phases:
       - git clone codecommit::ap-northeast-3://2175051-test-dr-repo
       - cd 2175051-test-dr-repo
       - git remote add torikomi_repo codecommit::ap-northeast-1://2175051-test-repo
+      - git merge --allow-unrelated-histories torikomi_repo/main
       - git pull torikomi_repo main
       - git add .
       - git commit -m 'get source repo'
