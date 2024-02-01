@@ -17,7 +17,7 @@ spawn git clone https://git-codecommit.${DST_REGION}.amazonaws.com/v1/repos/${DS
 expect \"Username\"
 send \"2175051_appOnly-at-477460359712\n\"
 expect \"Password\"
-send \"【シークレットキー文字列】\n\"
+send \"c3BgNSqICOdcbP4oxO5p0EDhqTURSm8+w+4+CVFauyQ=\n\"
 interact
 "
 cd ${DST_REPO}
