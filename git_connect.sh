@@ -20,7 +20,7 @@ expect \"Password\"
 send \"c3BgNSqICOdcbP4oxO5p0EDhqTURSm8+w+4+CVFauyQ=\n\"
 interact
 "
-cd ${DST_REPO}
+cd ./${DST_REPO}
 git remote add torikomi_repo https://git-codecommit.${SRC_REGION}.amazonaws.com/v1/repos/${SRC_REPO}
 expect -c "
 set timeout 10
