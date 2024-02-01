@@ -12,20 +12,17 @@ phases:
     on-failure: ABORT
     commands:
       - echo Build started on `date`
-      - git config --global user.email aws-codebuild
-      - git config --global user.name aws-codebuild
-      - git config --global pull.rebase false
-      - git clone codecommit::ap-northeast-3://2175051-test-dr-repo
+#      - git config --global user.email aws-codebuild
+#      - git config --global user.name aws-codebuild
+#      - git config --global pull.rebase false
+      - git clone codecommit::ap-northeast-1://2175051-test-repo
       - cd 2175051-test-dr-repo
-      - git remote add torikomi_repo codecommit::ap-northeast-1://2175051-test-repo
+      - git remote set-url origin codecommit::ap-northeast-3://2175051-test-dr-repo
+#      - git remote add torikomi_repo codecommit::ap-northeast-1://2175051-test-repo
 #      - git merge --allow-unrelated-histories torikomi_repo/main
-      - git pull torikomi_repo main
+      - git push origin main
 
   post_build:
-    on-failure: CONTINUE
+    on-failure: ABORT
     commands:
-      - git add .
-      - git commit -m 'get source repo'
-      - git remote rm torikomi_repo
-      - git push origin main
       - echo Build completed on `date`
