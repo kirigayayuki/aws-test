@@ -3,7 +3,8 @@ version: 0.2
 phases:
   install:
     commands:
-      - echo No Install phase
+      - echo Install started on `date`
+      - yum -y install expect
   pre_build:
     commands:
       - echo No Pre Build phase
