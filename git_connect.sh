@@ -20,6 +20,8 @@ expect \"Password\"
 send \"c3BgNSqICOdcbP4oxO5p0EDhqTURSm8+w+4+CVFauyQ=\n\"
 interact
 "
+pwd
+ls -l
 cd ./${DST_REPO}
 git remote add torikomi_repo https://git-codecommit.${SRC_REGION}.amazonaws.com/v1/repos/${SRC_REPO}
 expect -c "
