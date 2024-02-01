@@ -11,6 +11,10 @@ PASS='c3BgNSqICOdcbP4oxO5p0EDhqTURSm8+w+4+CVFauyQ='
 #################################################
 ###### src repo git pull & dst repo git push ####
 #################################################
+mkdir gitdir
+cd gitdir
+pwd
+ls -l
 expect -c "
 set timeout 10
 spawn git clone https://git-codecommit.${DST_REGION}.amazonaws.com/v1/repos/${DST_REPO}
