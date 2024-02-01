@@ -20,11 +20,12 @@ phases:
       - git remote add torikomi_repo codecommit::ap-northeast-1://2175051-test-repo
 #      - git merge --allow-unrelated-histories torikomi_repo/main
       - git pull torikomi_repo main
+
+  post_build:
+    on-failure: CONTINUE
+    commands:
       - git add .
       - git commit -m 'get source repo'
       - git remote rm torikomi_repo
       - git push origin main
-  post_build:
-    on-failure: ABORT
-    commands:
       - echo Build completed on `date`
