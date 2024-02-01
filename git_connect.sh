@@ -20,5 +20,6 @@ expect \"Password\"
 send \"c3BgNSqICOdcbP4oxO5p0EDhqTURSm8+w+4+CVFauyQ=\n\"
 interact
 "
+sleep 10
 pwd
 ls -l
