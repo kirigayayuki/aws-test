@@ -4,7 +4,7 @@
         "Role" : "arn:aws:iam::477460359712:role/2175051-testGlueRole",
         "Command": {
             "Name" : "pythonshell",
-            "PythonVersion" : "3",
+            "PythonVersion" : "3.9",
             "ScriptLocation": "s3://2175051-sf-cicd-test-bucket/glue/2175051-testJob1/glue_script.py"
         },
         "Connections" : {
