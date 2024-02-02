@@ -27,7 +27,8 @@
             "--processManagementId": "processManagementId",
             "--s3_input_folder_name": "s3_input_folder_name",
             "--table_suffix": "table_suffix",
-            "--enable-glue-datacatalog": "true"
+            "--enable-glue-datacatalog": "true",
+            "library-set": "analytics"
         }
     }
 }
