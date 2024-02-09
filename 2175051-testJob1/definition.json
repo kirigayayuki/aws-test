@@ -18,7 +18,9 @@
         "MaxRetries" : 1,
         "Timeout" : 2880,
         "MaxCapacity" : 0.0625, 
-        "SecurityConfiguration" : "none",
+        "AllocatedCapacity": 0,
+        "GlueVersion": "3.0",
+        "ExecutionClass": "STANDARD",
         "DefaultArguments" : {
             "--TempDir" : "s3://2175051-sf-cicd-test-bucket/glue/tmp/glue_script.py",
             "--extra-py-files": "s3://2175051-sf-cicd-test-bucket/glue/lib/glue_script.py,s3://2175051-sf-cicd-test-bucket/glue/lib/glue_script2.py",
@@ -28,7 +30,9 @@
             "--s3_input_folder_name": "s3_input_folder_name",
             "--table_suffix": "table_suffix",
             "--enable-glue-datacatalog": "true",
-            "library-set": "analytics"
+            "library-set": "analytics",
+            "--enable-job-insights": "false",
+            "--job-language": "python"
         }
     }
 }
