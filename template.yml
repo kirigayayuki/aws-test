@@ -61,51 +61,11 @@ Parameters:
     Description: 'KDFターゲットS3バケット'
     Type: String
     Default: 'arn:aws:s3:::2175051-sf-cicd-test-bucket'
-    
-Resources:  
-#Lambda用ロググループ
-  LambdaFunction1LogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      LogGroupName: !Sub ${LambdaFunctionName1}-lg
-      RetentionInDays: 7
-      Tags: 
-        - Key: Name
-          Value: !Sub ${LambdaFunctionName1}-lg
 
-  LambdaFunction1SubscriptionFilter:
-    Type: AWS::Logs::SubscriptionFilter
-    Properties:
-      DestinationArn: !Sub arn:aws:firehose:ap-northeast-1:${AwsAccount}:deliverystream/${LambdaFunctionName1}-delivery-stream
-      Distribution: Random
-      FilterName: !Sub ${LambdaFunctionName1}-subscription-s3-filter"
-      FilterPattern: ''
-      LogGroupName: !Sub ${LambdaFunctionName1}-lg
-      RoleArn: !Sub ${SubscriptionFilterRole}
-      
-  LambdaFunction1KDF:
-    Type: AWS::KinesisFirehose::DeliveryStream
-    Properties:
-      DeliveryStreamEncryptionConfigurationInput: 
-        DeliveryStreamEncryptionConfigurationInput
-      DeliveryStreamName: !Sub ${LambdaFunctionName1}-delivery-stream
-      DeliveryStreamType: DirectPut
-      ExtendedS3DestinationConfiguration: 
-        BucketARN: !Sub ${TargetS3Bacuket}
-        BufferingHints:
-          IntervalInSeconds: '60'
-          SizeInMBs: '50'
-        CompressionFormat: GZIP
-        Prefix: !Join [ "/", [ !Sub ${TargetS3bucketPrefix}, '' ] ]
-        RoleARN: !Sub ${KDFCommonRole}
-        ProcessingConfiguration:
-          Enabled: 'false'
-      Tags: 
-        - Key: Name
-          Value: !Sub ${LambdaFunctionName1}-delivery-stream
-
-
-#LambdaSAM
+Resources:
+  ###################################################
+  # Lambda Function
+  ###################################################
   LambdaLayer2:
     Type: "AWS::Serverless::LayerVersion"
     Properties:
@@ -179,7 +139,7 @@ Resources:
 #      SourceSecurityGroupId: !Ref SecurityGroup2
 
 
-  #ステートマシン用ロググループ
+  #Lambda用ロググループ
   LambdaFunction1LogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
