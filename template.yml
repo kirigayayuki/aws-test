@@ -158,6 +158,7 @@ Resources:
       FilterPattern: ''
       LogGroupName: !Sub /aws/lambda/${LambdaFunctionName1}-lg
       RoleArn: !Sub arn:aws:iam::${AwsAccount}:role/${SubscriptionFilterRole}
+      DependsOn: LambdaFunction1KDF
       
   LambdaFunction1KDF:
     Type: AWS::KinesisFirehose::DeliveryStream
