@@ -3,22 +3,22 @@ Transform: AWS::Serverless-2016-10-31
 
 
 Parameters:
-  TagEnvName:
-    Description: 'Environmentタグ'
-    Type: String
-    Default: 'Indev'
-  TagSrvName:
-    Description: 'Serviceタグ'
-    Type: String
-    Default: 'bcpf'
   AwsAccount:
     Description: 'AWSアカウント番号'
     Type: String
     Default: '477460359712'
-  StateMachineCommonRole:
-    Description: 'StateMachine共通IAMロール'
+  PrivateSubnet1:
+    Description: 'プライベートサブネット1'
     Type: String
-    Default: 'service-role/StepFunctions-2175051-test-MyStateMachine-role-0bxq48c31'
+    Default: 'subnet-08b3b53b973fe0d23'
+  PrivateSubnet2:
+    Description: 'プライベートサブネット2'
+    Type: String
+    Default: 'subnet-08505629ae83788fc'
+  LambdaCommonRole:
+    Description: 'Lambda共通IAMロール'
+    Type: String
+    Default: '2175051-test-lambda-role'
   SubscriptionFilterRole:
     Description: 'サブスクリプションフィルタ用IAMロール'
     Type: String
@@ -27,74 +27,182 @@ Parameters:
     Description: 'KDF用IAMロール'
     Type: String
     Default: '2175051-firehosetos3-role'
-
-  StateMachineName1:
-    Description: 'テスト用ステートマシン'
+    
+  LambdaFunctionName1:
+    Description: 'テスト用Lambda'
     Type: String
-    Default: '2175051-cfntest-statemachine01'
-  LambdaARN1:
-    Description: 'ステートマシン呼び出し先Lambda1'
+    Default: '2175051-cfntest-lambda01'
+  LambdaLayerName2:
+    Description: 'openpyxl用レイヤー'
     Type: String
-    Default: '2175051-test-task1-lambda'
-  LambdaARN2:
-    Description: 'ステートマシン呼び出し先Lambda2'
+    Default: 'openpyxl'
+    
+  VPCID:
+    Description: 'VPCID'
     Type: String
-    Default: 'arn:aws:lambda:ap-northeast-1:477460359712:function:2175051-test-task2-lambda:$LATEST'
+    Default: 'vpc-0d8f5785aec76fd74'
+  SgIngCidrIp1:
+    Description: 'SgIngCidrIp1'
+    Type: String
+    Default: '192.168.0.1/32'
+  SgIngFromPort1:
+    Description: 'SgIngFromPort1'
+    Type: String
+    Default: '22'
+  SgIngCidrIp2:
+    Description: 'SgIngCidrIp2'
+    Type: String
+    Default: '192.168.0.2/32'
+  SgIngFromPort2:
+    Description: 'SgIngFromPort2'
+    Type: String
+    Default: '443'
   TargetS3Bacuket:
     Description: 'KDFターゲットS3バケット'
     Type: String
     Default: 'arn:aws:s3:::2175051-sf-cicd-test-bucket'
-
+    
 Resources:  
-  ###################################################
-  # StepFunctions
-  ###################################################
-  StateMachine1:
-    Type: AWS::Serverless::StateMachine
-    Properties:
-      Name: !Sub ${StateMachineName1}
-      DefinitionUri: statemachine/lower1_definition.json
-      DefinitionSubstitutions:
-        lambdaArn1: !Sub ${LambdaARN1}
-        lambdaArn2: !Sub ${LambdaARN2}
-      Role: !Sub arn:aws:iam::${AwsAccount}:role/${StateMachineCommonRole}
-      Type: STANDARD
-      Logging:
-        Level: ALL
-        IncludeExecutionData: True
-        Destinations:
-          - CloudWatchLogsLogGroup:
-              LogGroupArn: !Sub arn:aws:logs:ap-northeast-1:${AwsAccount}:log-group:/aws/vendedlogs/states/${StateMachineName1}-lg:*
-      Tags: 
-        Name: !Sub ${StateMachineName1}
-        Environment: !Sub ${TagEnvName}
-        Service: !Sub ${TagSrvName}
-
-
-  #ステートマシン用ロググループ
-  StateMachine1LogGroup:
+#Lambda用ロググループ
+  LambdaFunction1LogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub /aws/vendedlogs/states/${StateMachineName1}-lg
+      LogGroupName: !Sub ${LambdaFunctionName1}-lg
       RetentionInDays: 7
       Tags: 
         - Key: Name
-          Value: !Sub ${StateMachineName1}-lg
+          Value: !Sub ${LambdaFunctionName1}-lg
 
-  StateMachine1SubscriptionFilter:
+  LambdaFunction1SubscriptionFilter:
     Type: AWS::Logs::SubscriptionFilter
     Properties:
-      DestinationArn: !Sub arn:aws:firehose:ap-northeast-1:${AwsAccount}:deliverystream/${StateMachineName1}-delivery-stream
+      DestinationArn: !Sub arn:aws:firehose:ap-northeast-1:${AwsAccount}:deliverystream/${LambdaFunctionName1}-delivery-stream
       Distribution: Random
-      FilterName: !Sub ${StateMachineName1}-subscription-s3-filter
+      FilterName: !Sub ${LambdaFunctionName1}-subscription-s3-filter"
       FilterPattern: ''
-      LogGroupName: !Sub /aws/vendedlogs/states/${StateMachineName1}-lg
-      RoleArn: !Sub arn:aws:iam::${AwsAccount}:role/${SubscriptionFilterRole}
+      LogGroupName: !Sub ${LambdaFunctionName1}-lg
+      RoleArn: !Sub ${SubscriptionFilterRole}
       
-  StateMachine1KDF:
+  LambdaFunction1KDF:
     Type: AWS::KinesisFirehose::DeliveryStream
     Properties:
-      DeliveryStreamName: !Sub ${StateMachineName1}-delivery-stream
+      DeliveryStreamEncryptionConfigurationInput: 
+        DeliveryStreamEncryptionConfigurationInput
+      DeliveryStreamName: !Sub ${LambdaFunctionName1}-delivery-stream
+      DeliveryStreamType: DirectPut
+      ExtendedS3DestinationConfiguration: 
+        BucketARN: !Sub ${TargetS3Bacuket}
+        BufferingHints:
+          IntervalInSeconds: '60'
+          SizeInMBs: '50'
+        CompressionFormat: GZIP
+        Prefix: !Join [ "/", [ !Sub ${TargetS3bucketPrefix}, '' ] ]
+        RoleARN: !Sub ${KDFCommonRole}
+        ProcessingConfiguration:
+          Enabled: 'false'
+      Tags: 
+        - Key: Name
+          Value: !Sub ${LambdaFunctionName1}-delivery-stream
+
+
+#LambdaSAM
+  LambdaLayer2:
+    Type: "AWS::Serverless::LayerVersion"
+    Properties:
+      LayerName: !Sub ${LambdaLayerName2}
+      Description: !Sub ${LambdaLayerName2}
+      CompatibleArchitectures: 
+        - x86_64
+      CompatibleRuntimes: 
+        - python3.11
+      ContentUri: layer/openpyxl
+      
+  LambdaFunction1:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${LambdaFunctionName1}
+      CodeUri: functions/task1/
+      Handler: lambda_function.lambda_handler
+      Role: !Sub arn:aws:iam::${AwsAccount}:role/${LambdaCommonRole}
+      Runtime: python3.11
+      Architectures: 
+        - x86_64
+      MemorySize: 128
+      EphemeralStorage:
+        Size: 512
+      Timeout: 30
+      VpcConfig: 
+        SecurityGroupIds:
+          - !GetAtt LambdaFunction1SG.GroupId
+        SubnetIds:
+          - !Sub ${PrivateSubnet1}
+          - !Sub ${PrivateSubnet2}
+      LoggingConfig:
+        LogFormat: JSON
+      Tags: 
+        Name: !Sub ${LambdaFunctionName1}
+      Layers: 
+        - !Ref LambdaLayer2
+      Environment: 
+        Variables:
+          KeyName1: Value1
+          KeyName2: Value2
+          
+  LambdaFunction1SG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub ${LambdaFunctionName1}-sg
+      GroupDescription: Allow http to client host
+      VpcId: !Sub ${VPCID}
+      # アウトバウンド設定
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: -1
+      # インバウンド設定
+      SecurityGroupIngress:
+        - CidrIp: !Sub ${SgIngCidrIp1}
+          FromPort: !Sub ${SgIngFromPort1}
+          IpProtocol: tcp
+          ToPort: !Sub ${SgIngFromPort1}
+        - CidrIp: !Sub ${SgIngCidrIp2}
+          FromPort: !Sub ${SgIngFromPort2}
+          IpProtocol: tcp
+          ToPort: !Sub ${SgIngFromPort2}
+          
+#  LambdaFunction1SGIngress:
+#    Type: AWS::EC2::SecurityGroupIngress
+#    Properties:
+#      IpProtocol: tcp
+#      FromPort: 80
+#      ToPort: 80
+#      GroupId: !Ref SecurityGroup1
+#      SourceSecurityGroupId: !Ref SecurityGroup2
+
+
+  #ステートマシン用ロググループ
+  LambdaFunction1LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${LambdaFunctionName1}-lg
+      RetentionInDays: 7
+      Tags: 
+        - Key: Name
+          Value: !Sub ${LambdaFunctionName1}-lg
+
+  LambdaFunction1SubscriptionFilter:
+    Type: AWS::Logs::SubscriptionFilter
+    Properties:
+      DestinationArn: !Sub arn:aws:firehose:ap-northeast-1:${AwsAccount}:deliverystream/${LambdaFunctionName1}-delivery-stream
+      Distribution: Random
+      FilterName: !Sub ${LambdaFunctionName1}-subscription-s3-filter
+      FilterPattern: ''
+      LogGroupName: !Sub /aws/lambda/${LambdaFunctionName1}-lg
+      RoleArn: !Sub arn:aws:iam::${AwsAccount}:role/${SubscriptionFilterRole}
+      
+  LambdaFunction1KDF:
+    Type: AWS::KinesisFirehose::DeliveryStream
+    Properties:
+      DeliveryStreamName: !Sub ${LambdaFunctionName1}-delivery-stream
       DeliveryStreamType: DirectPut
       ExtendedS3DestinationConfiguration: 
         BucketARN: !Sub ${TargetS3Bacuket}
@@ -104,7 +212,7 @@ Resources:
         RoleARN: !Sub arn:aws:iam::${AwsAccount}:role/${KDFCommonRole}
         CloudWatchLoggingOptions:
           Enabled: true
-          LogGroupName: !Sub '/aws/kinesisfirehose/${StateMachineName1}-delivery-stream'
+          LogGroupName: !Sub '/aws/kinesisfirehose/${LambdaFunctionName1}-delivery-stream'
           LogStreamName: S3Delivery
         CompressionFormat:  GZIP
         EncryptionConfiguration:
@@ -113,4 +221,4 @@ Resources:
         Prefix: 'logs/info/'
       Tags: 
         - Key: Name
-          Value: !Sub ${StateMachineName1}-delivery-stream
+          Value: !Sub ${LambdaFunctionName1}-delivery-stream
