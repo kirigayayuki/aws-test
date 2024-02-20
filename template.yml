@@ -99,6 +99,7 @@ Resources:
           - !Sub ${PrivateSubnet2}
       LoggingConfig:
         LogFormat: JSON
+        LogGroup: !Sub /aws/lambda/${LambdaFunctionName1}-lg
       Tags: 
         Name: !Sub ${LambdaFunctionName1}
       Layers: 
