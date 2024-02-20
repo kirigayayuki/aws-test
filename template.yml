@@ -1,0 +1,102 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+
+Parameters:
+  TagEnvName:
+    Description: 'Environmentタグ'
+    Type: String
+    Default: 'Indev'
+  TagSrvName:
+    Description: 'Serviceタグ'
+    Type: String
+    Default: 'bcpf'
+  AwsAccount:
+    Description: 'AWSアカウント番号'
+    Type: String
+    Default: '477460359712'
+  StateMachineCommonRole:
+    Description: 'StateMachine共通IAMロール'
+    Type: String
+    Default: 'service-role/StepFunctions-2175051-test-MyStateMachine-role-0bxq48c31'
+  SubscriptionFilterRole:
+    Description: 'サブスクリプションフィルタ用IAMロール'
+    Type: String
+    Default: '2175051-cwltofirehose-role'
+  KDFCommonRole:
+    Description: 'KDF用IAMロール'
+    Type: String
+    Default: '2175051-firehosetos3-role'
+
+  StateMachineName1:
+    Description: 'テスト用ステートマシン'
+    Type: String
+    Default: '2175051-cfntest-statemachine01'
+    
+    
+Resources:  
+  ###################################################
+  # StepFunctions
+  ###################################################
+  StateMachine1:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      Name: !Sub ${StateMachineName1}
+      DefinitionUri: statemachine/lower1_definition.json
+      DefinitionSubstitutions:
+        lambdaArn1: !Sub ${LambdaARN1}
+        lambdaArn2: !Sub ${LambdaARN2}
+      Role: !Sub arn:aws:iam::${AwsAccount}:role/${StateMachineCommonRole}
+      Type: STANDARD
+      Logging:
+        Level: ALL
+        IncludeExecutionData: True
+        Destinations:
+          - CloudWatchLogsLogGroup:
+              LogGroupArn: !Sub arn:aws:logs:ap-northeast-1:${AwsAccount}:log-group:/aws/vendedlogs/states/${StateMachineName1}-lg:*
+      Tags: 
+        Name: !Sub ${StateMachineName1}
+        Environment: !Sub ${TagEnvName}
+        Service: !Sub ${TagSrvName}
+
+
+  #ステートマシン用ロググループ
+  StateMachine1LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/vendedlogs/states/${StateMachineName1}-lg
+      RetentionInDays: 7
+      Tags: 
+        - Key: Name
+          Value: !Sub ${StateMachineName1}-lg
+
+#  StateMachine1SubscriptionFilter:
+#    Type: AWS::Logs::SubscriptionFilter
+#    Properties:
+#      DestinationArn: !Sub arn:aws:firehose:ap-northeast-1:${AwsAccount}:deliverystream/${StateMachineName1}-delivery-stream
+#      Distribution: Random
+#      FilterName: !Sub ${StateMachineName1}-subscription-s3-filter"
+#      FilterPattern: ''
+#      LogGroupName: !Sub ${StateMachineName1}-lg
+#      RoleArn: !Sub arn:aws:iam::${AwsAccount}:role/h${SubscriptionFilterRole}
+      
+#  StateMachine1KDF:
+#    Type: AWS::KinesisFirehose::DeliveryStream
+#    Properties:
+#      DeliveryStreamEncryptionConfigurationInput: 
+#        DeliveryStreamEncryptionConfigurationInput
+#      DeliveryStreamName: !Sub ${StateMachineName1}-delivery-stream
+#      DeliveryStreamType: DirectPut
+#      ExtendedS3DestinationConfiguration: 
+#        BucketARN: !Sub ${TargetS3Bacuket}
+#        BufferingHints:
+#          IntervalInSeconds: '60'
+#          SizeInMBs: '50'
+#        CompressionFormat: GZIP
+#        Prefix: !Join [ "/", [ !Sub ${TargetS3bucketPrefix}, '' ] ]
+#        RoleARN: !Sub ${KDFCommonRole}
+#        ProcessingConfiguration:
+#          Enabled: 'false'
+#      Tags: 
+#        - Key: Name
+#          Value: !Sub ${StateMachineName1}-delivery-stream

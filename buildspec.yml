@@ -1,17 +1,33 @@
 version: 0.2
+env:
+  variables:
+    S3_BUCKET: "2175051-sf-cicd-test-bucket"
+    AWS_REGION: "ap-northeast-1"
 
 phases:
   install:
     commands:
-      - echo No Install phase
+      - echo Install phase
+      - which sam
+#      - ls -l /root/.pyenv/shims/sam
+#      - sudo rm /root/.pyenv/shims/sam
+      - sudo rm /usr/local/bin/sam
+      - sudo rm -rf /usr/local/aws-sam-cli
+      - wget https://github.com/aws/aws-sam-cli/releases/latest/download/aws-sam-cli-linux-x86_64.zip
+      - unzip aws-sam-cli-linux-x86_64.zip -d sam-installation
+      - sudo ./sam-installation/install
+      - sam --version
+      - ls
   pre_build:
+    on-failure: ABORT
     commands:
-      - echo No Pre Build phase
+      - echo "Start checking sam template file..."
+      - sam validate --lint --template template.yml
   build:
     on-failure: ABORT
     commands:
-      - echo Build started on `date`
-      - sh glue_update.sh
+      - echo "Start deploying Statemachine And Lambda Function..."
+      - sam deploy --no-confirm-changeset --no-fail-on-empty-changeset
   post_build:
     on-failure: ABORT
     commands:
