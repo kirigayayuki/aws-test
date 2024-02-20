@@ -19,10 +19,10 @@ Parameters:
     Description: 'StateMachine共通IAMロール'
     Type: String
     Default: 'service-role/StepFunctions-2175051-test-MyStateMachine-role-0bxq48c31'
-#  SubscriptionFilterRole:
-#    Description: 'サブスクリプションフィルタ用IAMロール'
-#    Type: String
-#    Default: '2175051-cwltofirehose-role'
+  SubscriptionFilterRole:
+    Description: 'サブスクリプションフィルタ用IAMロール'
+    Type: String
+    Default: '2175051-cwltofirehose-role'
   KDFCommonRole:
     Description: 'KDF用IAMロール'
     Type: String
