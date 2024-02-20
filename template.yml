@@ -152,13 +152,13 @@ Resources:
   LambdaFunction1SubscriptionFilter:
     Type: AWS::Logs::SubscriptionFilter
     Properties:
-      DestinationArn: !Sub arn:aws:firehose:ap-northeast-1:${AwsAccount}:deliverystream/${LambdaFunctionName1}-delivery-stream
+      DestinationArn: !GetAtt LambdaFunction1KDF.Arn
       Distribution: Random
       FilterName: !Sub ${LambdaFunctionName1}-subscription-s3-filter
       FilterPattern: ''
       LogGroupName: !Sub /aws/lambda/${LambdaFunctionName1}-lg
       RoleArn: !Sub arn:aws:iam::${AwsAccount}:role/${SubscriptionFilterRole}
-      DependsOn: LambdaFunction1KDF
+
       
   LambdaFunction1KDF:
     Type: AWS::KinesisFirehose::DeliveryStream
