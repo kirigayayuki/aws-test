@@ -18,7 +18,7 @@ Parameters:
   LambdaCommonRole:
     Description: 'Lambda共通IAMロール'
     Type: String
-    Default: '2175051-test-lambda-role'
+    Default: '2175051_lambda-common-role'
   SubscriptionFilterRole:
     Description: 'サブスクリプションフィルタ用IAMロール'
     Type: String
