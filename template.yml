@@ -19,19 +19,27 @@ Parameters:
     Description: 'StateMachine共通IAMロール'
     Type: String
     Default: 'service-role/StepFunctions-2175051-test-MyStateMachine-role-0bxq48c31'
-  SubscriptionFilterRole:
-    Description: 'サブスクリプションフィルタ用IAMロール'
-    Type: String
-    Default: '2175051-cwltofirehose-role'
-  KDFCommonRole:
-    Description: 'KDF用IAMロール'
-    Type: String
-    Default: '2175051-firehosetos3-role'
+#  SubscriptionFilterRole:
+#    Description: 'サブスクリプションフィルタ用IAMロール'
+#    Type: String
+#    Default: '2175051-cwltofirehose-role'
+#  KDFCommonRole:
+#    Description: 'KDF用IAMロール'
+#    Type: String
+#    Default: '2175051-firehosetos3-role'
 
   StateMachineName1:
     Description: 'テスト用ステートマシン'
     Type: String
     Default: '2175051-cfntest-statemachine01'
+  LambdaARN1:
+    Description: 'ステートマシン呼び出し先Lambda1'
+    Type: String
+    Default: '2175051-test-task1-lambda'
+  LambdaARN2:
+    Description: 'ステートマシン呼び出し先Lambda2'
+    Type: String
+    Default: 'arn:aws:lambda:ap-northeast-1:477460359712:function:2175051-test-task2-lambda:$LATEST'
     
     
 Resources:  
