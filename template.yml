@@ -89,7 +89,7 @@ Resources:
 #      FilterName: !Sub ${StateMachineName1}-subscription-s3-filter"
 #      FilterPattern: ''
 #      LogGroupName: !Sub ${StateMachineName1}-lg
-#      RoleArn: !Sub arn:aws:iam::${AwsAccount}:role/h${SubscriptionFilterRole}
+#      RoleArn: !Sub arn:aws:iam::${AwsAccount}:role/${SubscriptionFilterRole}
       
   StateMachine1KDF:
     Type: AWS::KinesisFirehose::DeliveryStream
@@ -101,7 +101,7 @@ Resources:
         BufferingHints:
           IntervalInSeconds: '60'
           SizeInMBs: '50'
-        RoleARN: !Sub ${KDFCommonRole}
+        RoleARN: !Sub arn:aws:iam::${AwsAccount}:role/${KDFCommonRole}
         CloudWatchLoggingOptions:
           Enabled: true
           LogGroupName: !Sub '/aws/kinesisfirehose/${StateMachineName1}-delivery-stream'
