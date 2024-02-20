@@ -86,7 +86,7 @@ Resources:
     Properties:
       DestinationArn: !Sub arn:aws:firehose:ap-northeast-1:${AwsAccount}:deliverystream/${StateMachineName1}-delivery-stream
       Distribution: Random
-      FilterName: !Sub ${StateMachineName1}-subscription-s3-filter"
+      FilterName: !Sub ${StateMachineName1}-subscription-s3-filter
       FilterPattern: ''
       LogGroupName: !Sub ${StateMachineName1}-lg
       RoleArn: !Sub arn:aws:iam::${AwsAccount}:role/${SubscriptionFilterRole}
