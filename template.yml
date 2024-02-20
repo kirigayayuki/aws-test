@@ -88,7 +88,7 @@ Resources:
       Distribution: Random
       FilterName: !Sub ${StateMachineName1}-subscription-s3-filter
       FilterPattern: ''
-      LogGroupName: !Sub ${StateMachineName1}-lg
+      LogGroupName: !Sub /aws/vendedlogs/states/${StateMachineName1}-lg
       RoleArn: !Sub arn:aws:iam::${AwsAccount}:role/${SubscriptionFilterRole}
       
   StateMachine1KDF:
