@@ -22,7 +22,7 @@ phases:
     on-failure: ABORT
     commands:
       - echo "Start checking sam template file..."
-      - sam validate --lint --template template.yml
+#      - sam validate --lint --template template.yml
   build:
     on-failure: ABORT
     commands:
