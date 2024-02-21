@@ -69,8 +69,8 @@ Resources:
         CompressionFormat:  GZIP
         EncryptionConfiguration:
           NoEncryptionConfig: NoEncryption
-        ErrorOutputPrefix: !Sub'logs/error/${ResourceName}'
-        Prefix: !Sub'logs/info/${ResourceName}'
+        ErrorOutputPrefix: !Sub 'logs/error/${ResourceName}'
+        Prefix: !Sub 'logs/info/${ResourceName}'
       Tags: 
         - Key: Name
           Value: !Sub ${ResourceName}-delivery-stream
