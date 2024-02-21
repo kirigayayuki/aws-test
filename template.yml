@@ -115,6 +115,9 @@ Resources:
       GroupName: !Sub ${LambdaFunctionName1}-sg
       GroupDescription: Allow http to client host
       VpcId: !Sub ${VPCID}
+      Tags: 
+        - Key: Name
+          Value: !Sub ${LambdaFunctionName1}-sg
       # アウトバウンド設定
 #      SecurityGroupEgress:
 #        - CidrIp: 0.0.0.0/0
