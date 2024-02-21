@@ -37,7 +37,7 @@ Resources:
         NestSubscriptionFilterRole: !Sub ${SubscriptionFilterRole}
         NestKDFCommonRole: !Sub ${KDFCommonRole}
         NestResourceName: !Sub ${ResourceName}
-        LogGroupName: !Sub aws/lambda/${ResourceName}
+        LogGroupName: !Sub ${ResourceName}
         NestTargetS3Bacuket: !Sub ${TargetS3Bacuket}
         
 #  LambdaStack:

@@ -32,7 +32,7 @@ Resources:
   # Lambda Function
   ###################################################
   #Lambda用ロググループ
-  LogGroup:
+  TestLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Sub ${LogGroupName}
@@ -41,17 +41,17 @@ Resources:
         - Key: Name
           Value: !Sub ${LogGroupName}
 
-  SubscriptionFilter:
+  TestSubscriptionFilter:
     Type: AWS::Logs::SubscriptionFilter
     Properties:
-      DestinationArn: !GetAtt KDF.Arn
+      DestinationArn: !GetAtt TestKDF.Arn
       Distribution: Random
       FilterName: !Sub ${NestResourceName}-subscription-s3-filter
       FilterPattern: ''
-      LogGroupName: !Ref LogGroup
+      LogGroupName: !Ref TestLogGroup
       RoleArn: !Sub arn:aws:iam::${NestAwsAccount}:role/${NestSubscriptionFilterRole}
       
-  KDF:
+  TestKDF:
     Type: AWS::KinesisFirehose::DeliveryStream
     Properties:
       DeliveryStreamName: !Sub ${NestResourceName}-delivery-stream
