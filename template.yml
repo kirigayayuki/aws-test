@@ -99,7 +99,7 @@ Resources:
           - !Sub ${PrivateSubnet2}
       LoggingConfig:
         LogFormat: JSON
-        LogGroup: !Sub /aws/lambda/${LambdaFunctionName1}-lg
+        LogGroup: !Ref LambdaFunction1LogGroup
       Tags: 
         Name: !Sub ${LambdaFunctionName1}
       Layers: 
@@ -173,7 +173,7 @@ Resources:
       Distribution: Random
       FilterName: !Sub ${LambdaFunctionName1}-subscription-s3-filter
       FilterPattern: ''
-      LogGroupName: !Sub /aws/lambda/${LambdaFunctionName1}-lg
+      LogGroupName: !Ref LambdaFunction1LogGroup
       RoleArn: !Sub arn:aws:iam::${AwsAccount}:role/${SubscriptionFilterRole}
 
       
