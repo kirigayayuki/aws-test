@@ -134,12 +134,13 @@ Resources:
     Type: AWS::EC2::SecurityGroupEgress
     Properties:
       IpProtocol: -1
-      CidrIp: !Sub ${SgIngCidrIp1}
+      CidrIp: 0.0.0.0/0
       GroupId: !GetAtt LambdaFunction1SG.GroupId
   LambdaFunction1SGIngress1:
     Type: AWS::EC2::SecurityGroupIngress
     Properties:
       IpProtocol: tcp
+      CidrIp: !Sub ${SgIngCidrIp1}
       FromPort: !Sub ${SgIngFromPort1}
       ToPort: !Sub ${SgIngFromPort1}
       GroupId: !GetAtt LambdaFunction1SG.GroupId
@@ -147,6 +148,7 @@ Resources:
     Type: AWS::EC2::SecurityGroupIngress
     Properties:
       IpProtocol: tcp
+      CidrIp: !Sub ${SgIngCidrIp2}
       FromPort: !Sub ${SgIngFromPort2}
       ToPort: !Sub ${SgIngFromPort2}
       GroupId: !GetAtt LambdaFunction1SG.GroupId
