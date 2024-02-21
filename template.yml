@@ -29,16 +29,16 @@ Parameters:
 
 Resources:
   LogTransferStack:
-    Type: AWS::CloudFormation::Stack
+    Type: AWS::Serverless::Application
     Properties:
-      TemplateURL: ./log_transfer_template.yaml
+      Location: ./log_transfer_template.yaml
       Parameters:
         NestAwsAccount: !Sub ${AwsAccount}
         NestSubscriptionFilterRole: !Sub ${SubscriptionFilterRole}
         NestKDFCommonRole: !Sub ${KDFCommonRole}
         NestResourceName: !Sub ${ResourceName}
         LogGroupName: !Sub aws/lambda/${ResourceName}
-        NestTargetS3Bacuket: !Sub ${NestTargetS3Bacuket}
+        NestTargetS3Bacuket: !Sub ${TargetS3Bacuket}
         
 #  LambdaStack:
 #    Type: AWS::CloudFormation::Stack
