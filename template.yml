@@ -130,26 +130,26 @@ Resources:
 #          IpProtocol: tcp
 #          ToPort: !Sub ${SgIngFromPort2}
           
-#  LambdaFunction1SGEgress:
-#    Type: AWS::EC2::SecurityGroupEgress
-#    Properties:
-#      IpProtocol: -1
-#      CidrIp: !Sub ${SgIngCidrIp1}
-#      GroupId: !GetAtt LambdaFunction1SG.GroupId
-#  LambdaFunction1SGIngress1:
-#    Type: AWS::EC2::SecurityGroupIngress
-#    Properties:
-#      IpProtocol: tcp
-#      FromPort: !Sub ${SgIngFromPort1}
-#      ToPort: !Sub ${SgIngFromPort1}
-#      GroupId: !GetAtt LambdaFunction1SG.GroupId
-#  LambdaFunction1SGIngress2:
-#    Type: AWS::EC2::SecurityGroupIngress
-#    Properties:
-#      IpProtocol: tcp
-#      FromPort: !Sub ${SgIngFromPort2}
-#      ToPort: !Sub ${SgIngFromPort2}
-#      GroupId: !GetAtt LambdaFunction1SG.GroupId
+  LambdaFunction1SGEgress:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      IpProtocol: -1
+      CidrIp: !Sub ${SgIngCidrIp1}
+      GroupId: !GetAtt LambdaFunction1SG.GroupId
+  LambdaFunction1SGIngress1:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      FromPort: !Sub ${SgIngFromPort1}
+      ToPort: !Sub ${SgIngFromPort1}
+      GroupId: !GetAtt LambdaFunction1SG.GroupId
+  LambdaFunction1SGIngress2:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      FromPort: !Sub ${SgIngFromPort2}
+      ToPort: !Sub ${SgIngFromPort2}
+      GroupId: !GetAtt LambdaFunction1SG.GroupId
 
   #Lambda用ロググループ
   LambdaFunction1LogGroup:
