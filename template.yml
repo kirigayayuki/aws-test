@@ -7,18 +7,7 @@ Parameters:
     Description: 'AWSアカウント番号'
     Type: String
     Default: '477460359712'
-  PrivateSubnet1:
-    Description: 'プライベートサブネット1'
-    Type: String
-    Default: 'subnet-08b3b53b973fe0d23'
-  PrivateSubnet2:
-    Description: 'プライベートサブネット2'
-    Type: String
-    Default: 'subnet-08505629ae83788fc'
-  LambdaCommonRole:
-    Description: 'Lambda共通IAMロール'
-    Type: String
-    Default: '2175051_lambda-common-role'
+
   SubscriptionFilterRole:
     Description: 'サブスクリプションフィルタ用IAMロール'
     Type: String
@@ -28,175 +17,34 @@ Parameters:
     Type: String
     Default: '2175051-firehosetos3-role'
     
-  LambdaFunctionName1:
-    Description: 'テスト用Lambda'
+  ResourceName:
+    Description: 'テスト用'
     Type: String
-    Default: '2175051-cfntest-lambda01'
-  LambdaLayerName2:
-    Description: 'openpyxl用レイヤー'
-    Type: String
-    Default: 'openpyxl'
+    Default: '2175051-cfntest-lggr'
     
-  VPCID:
-    Description: 'VPCID'
-    Type: String
-    Default: 'vpc-0d8f5785aec76fd74'
-  SgIngCidrIp1:
-    Description: 'SgIngCidrIp1'
-    Type: String
-    Default: '192.168.0.1/32'
-  SgIngFromPort1:
-    Description: 'SgIngFromPort1'
-    Type: String
-    Default: '22'
-  SgIngCidrIp2:
-    Description: 'SgIngCidrIp2'
-    Type: String
-    Default: '192.168.0.2/32'
-  SgIngFromPort2:
-    Description: 'SgIngFromPort2'
-    Type: String
-    Default: '443'
   TargetS3Bacuket:
     Description: 'KDFターゲットS3バケット'
     Type: String
     Default: 'arn:aws:s3:::2175051-sf-cicd-test-bucket'
 
 Resources:
-  ###################################################
-  # Lambda Function
-  ###################################################
-  LambdaLayer2:
-    Type: "AWS::Serverless::LayerVersion"
+  LogTransferStack:
+    Type: AWS::CloudFormation::Stack
     Properties:
-      LayerName: !Sub ${LambdaLayerName2}
-      Description: !Sub ${LambdaLayerName2}
-      CompatibleArchitectures: 
-        - x86_64
-      CompatibleRuntimes: 
-        - python3.11
-      ContentUri: layer/openpyxl
-      
-  LambdaFunction1:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName: !Sub ${LambdaFunctionName1}
-      CodeUri: functions/task1/
-      Handler: lambda_function.lambda_handler
-      Role: !Sub arn:aws:iam::${AwsAccount}:role/${LambdaCommonRole}
-      Runtime: python3.11
-      Architectures: 
-        - x86_64
-      MemorySize: 128
-      EphemeralStorage:
-        Size: 512
-      Timeout: 30
-      VpcConfig: 
-        SecurityGroupIds:
-          - !GetAtt LambdaFunction1SG.GroupId
-        SubnetIds:
-          - !Sub ${PrivateSubnet1}
-          - !Sub ${PrivateSubnet2}
-      LoggingConfig:
-        LogFormat: JSON
-        LogGroup: !Ref LambdaFunction1LogGroup
-      Tags: 
-        Name: !Sub ${LambdaFunctionName1}
-      Layers: 
-        - !Ref LambdaLayer2
-      Environment: 
-        Variables:
-          KeyName1: Value1
-          KeyName2: Value2
-          
-  LambdaFunction1SG:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupName: !Sub ${LambdaFunctionName1}-sg
-      GroupDescription: Allow http to client host
-      VpcId: !Sub ${VPCID}
-      Tags: 
-        - Key: Name
-          Value: !Sub ${LambdaFunctionName1}-sg
-      # アウトバウンド設定
-#      SecurityGroupEgress:
-#        - CidrIp: 0.0.0.0/0
-#          IpProtocol: -1
-#      # インバウンド設定
-#      SecurityGroupIngress:
-#        - CidrIp: !Sub ${SgIngCidrIp1}
-#          FromPort: !Sub ${SgIngFromPort1}
-#          IpProtocol: tcp
-#          ToPort: !Sub ${SgIngFromPort1}
-#        - CidrIp: !Sub ${SgIngCidrIp2}
-#          FromPort: !Sub ${SgIngFromPort2}
-#          IpProtocol: tcp
-#          ToPort: !Sub ${SgIngFromPort2}
-          
-  LambdaFunction1SGEgress:
-    Type: AWS::EC2::SecurityGroupEgress
-    Properties:
-      IpProtocol: -1
-      CidrIp: 0.0.0.0/0
-      GroupId: !GetAtt LambdaFunction1SG.GroupId
-  LambdaFunction1SGIngress1:
-    Type: AWS::EC2::SecurityGroupIngress
-    Properties:
-      IpProtocol: tcp
-      CidrIp: !Sub ${SgIngCidrIp1}
-      FromPort: !Sub ${SgIngFromPort1}
-      ToPort: !Sub ${SgIngFromPort1}
-      GroupId: !GetAtt LambdaFunction1SG.GroupId
-  LambdaFunction1SGIngress2:
-    Type: AWS::EC2::SecurityGroupIngress
-    Properties:
-      IpProtocol: tcp
-      CidrIp: !Sub ${SgIngCidrIp2}
-      FromPort: !Sub ${SgIngFromPort2}
-      ToPort: !Sub ${SgIngFromPort2}
-      GroupId: !GetAtt LambdaFunction1SG.GroupId
+      TemplateURL: ./log_transfer_template.yaml
+      Parameters:
+        NestAwsAccount: !Sub ${AwsAccount}
+        NestSubscriptionFilterRole: !Sub ${SubscriptionFilterRole}
+        NestKDFCommonRole: !Sub ${KDFCommonRole}
+        NestResourceName: !Sub ${ResourceName}
+        LogGroupName: !Sub aws/lambda/${ResourceName}
+        NestTargetS3Bacuket: !Sub ${NestTargetS3Bacuket}
+        
+#  LambdaStack:
+#    Type: AWS::CloudFormation::Stack
+#    Properties:
+#      TemplateURL: ./lambda_template.yaml
+#      Parameters:
+#        NestVPCRange: !Ref VPCRange
+#        NestSubnetRange1: !Ref SubnetRange1
 
-  #Lambda用ロググループ
-  LambdaFunction1LogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      LogGroupName: !Sub /aws/lambda/${LambdaFunctionName1}-lg
-      RetentionInDays: 7
-      Tags: 
-        - Key: Name
-          Value: !Sub ${LambdaFunctionName1}-lg
-
-  LambdaFunction1SubscriptionFilter:
-    Type: AWS::Logs::SubscriptionFilter
-    Properties:
-      DestinationArn: !GetAtt LambdaFunction1KDF.Arn
-      Distribution: Random
-      FilterName: !Sub ${LambdaFunctionName1}-subscription-s3-filter
-      FilterPattern: ''
-      LogGroupName: !Ref LambdaFunction1LogGroup
-      RoleArn: !Sub arn:aws:iam::${AwsAccount}:role/${SubscriptionFilterRole}
-
-      
-  LambdaFunction1KDF:
-    Type: AWS::KinesisFirehose::DeliveryStream
-    Properties:
-      DeliveryStreamName: !Sub ${LambdaFunctionName1}-delivery-stream
-      DeliveryStreamType: DirectPut
-      ExtendedS3DestinationConfiguration: 
-        BucketARN: !Sub ${TargetS3Bacuket}
-        BufferingHints:
-          IntervalInSeconds: '60'
-          SizeInMBs: '50'
-        RoleARN: !Sub arn:aws:iam::${AwsAccount}:role/${KDFCommonRole}
-        CloudWatchLoggingOptions:
-          Enabled: true
-          LogGroupName: !Sub '/aws/kinesisfirehose/${LambdaFunctionName1}-delivery-stream'
-          LogStreamName: S3Delivery
-        CompressionFormat:  GZIP
-        EncryptionConfiguration:
-          NoEncryptionConfig: NoEncryption
-        ErrorOutputPrefix: 'logs/error/'
-        Prefix: 'logs/info/'
-      Tags: 
-        - Key: Name
-          Value: !Sub ${LambdaFunctionName1}-delivery-stream

@@ -1,0 +1,76 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+
+Parameters:
+  NestAwsAccount:
+    Description: 'AWSアカウント番号'
+    Type: String
+
+  NestSubscriptionFilterRole:
+    Description: 'サブスクリプションフィルタ用IAMロール'
+    Type: String
+
+  NestKDFCommonRole:
+    Description: 'KDF用IAMロール'
+    Type: String
+    
+  NestResourceName:
+    Description: 'テスト用Lambda'
+    Type: String
+    
+  LogGroupName:
+    Description: 'テスト用Lambda'
+    Type: String
+    
+  NestTargetS3Bacuket:
+    Description: 'KDFターゲットS3バケット'
+    Type: String
+
+Resources:
+  ###################################################
+  # Lambda Function
+  ###################################################
+  #Lambda用ロググループ
+  LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub ${LogGroupName}
+      RetentionInDays: 7
+      Tags: 
+        - Key: Name
+          Value: !Sub ${LogGroupName}
+
+  SubscriptionFilter:
+    Type: AWS::Logs::SubscriptionFilter
+    Properties:
+      DestinationArn: !GetAtt KDF.Arn
+      Distribution: Random
+      FilterName: !Sub ${ResourceName}-subscription-s3-filter
+      FilterPattern: ''
+      LogGroupName: !Ref LogGroup
+      RoleArn: !Sub arn:aws:iam::${AwsAccount}:role/${SubscriptionFilterRole}
+      
+  KDF:
+    Type: AWS::KinesisFirehose::DeliveryStream
+    Properties:
+      DeliveryStreamName: !Sub ${ResourceName}-delivery-stream
+      DeliveryStreamType: DirectPut
+      ExtendedS3DestinationConfiguration: 
+        BucketARN: !Sub ${TargetS3Bacuket}
+        BufferingHints:
+          IntervalInSeconds: '60'
+          SizeInMBs: '50'
+        RoleARN: !Sub arn:aws:iam::${AwsAccount}:role/${KDFCommonRole}
+        CloudWatchLoggingOptions:
+          Enabled: true
+          LogGroupName: !Sub '/aws/kinesisfirehose/${ResourceName}-delivery-stream'
+          LogStreamName: S3Delivery
+        CompressionFormat:  GZIP
+        EncryptionConfiguration:
+          NoEncryptionConfig: NoEncryption
+        ErrorOutputPrefix: !Sub'logs/error/${ResourceName}'
+        Prefix: !Sub'logs/info/${ResourceName}'
+      Tags: 
+        - Key: Name
+          Value: !Sub ${ResourceName}-delivery-stream
