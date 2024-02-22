@@ -36,10 +36,6 @@ Parameters:
     Description: 'openpyxl用レイヤー'
     Type: String
     Default: 'openpyxl'
-  LambdaFunctionPass1:
-    Description: 'テスト用Lambdaパス'
-    Type: String
-    Default: 'task1'
     
   TargetS3Bacuket:
     Description: 'KDFターゲットS3バケット'
@@ -103,7 +99,6 @@ Resources:
         PrivateSubnet1: !Sub ${PrivateSubnet1}
         PrivateSubnet2: !Sub ${PrivateSubnet2}
         LambdaCommonRole: !Sub ${LambdaCommonRole}
-        DirPass: !Join [ "", [functions/, !Ref LambdaFunctionPass1 ]]
     DependsOn: 
       - SGStack
       - LogTransferStack
