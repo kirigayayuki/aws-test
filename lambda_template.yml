@@ -27,7 +27,7 @@ Parameters:
     Description: 'openpyxl用レイヤー'
     Type: String
     
-  DirPass
+  DirPass:
     Description: 'pass'
     Type: String
     Default: 'functions/task1/'
