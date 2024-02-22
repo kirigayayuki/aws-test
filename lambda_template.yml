@@ -27,10 +27,6 @@ Parameters:
     Description: 'openpyxl用レイヤー'
     Type: String
     
-  DirPass:
-    Description: 'pass'
-    Type: String
-    Default: 'functions/task1/'
 
 Resources:
   ###################################################
@@ -51,7 +47,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: !Sub ${LambdaFunctionName1}
-      CodeUri: !Ref DirPass
+      CodeUri: functions/task1/
       Handler: lambda_function.lambda_handler
       Role: !Sub arn:aws:iam::${AwsAccount}:role/${LambdaCommonRole}
       Runtime: python3.11
