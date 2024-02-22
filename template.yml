@@ -89,9 +89,9 @@ Resources:
         SgIngFromPort2: !Sub ${SgIngFromPort2}
         
   LambdaStack:
-    Type: AWS::CloudFormation::Stack
+    Type: AWS::Serverless::Application
     Properties:
-      TemplateURL: ./lambda_template.yaml
+      Location: ./lambda_template.yml
       Parameters:
         LambdaFunctionName1: !Sub ${LambdaFunctionName1}
         LambdaLayerName2: !Sub ${LambdaLayerName2}
