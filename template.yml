@@ -16,11 +16,14 @@ Parameters:
     Description: 'KDF用IAMロール'
     Type: String
     Default: '2175051-firehosetos3-role'
-    
+  LogGroupName:
+    Description: 'テスト用'
+    Type: String
+    Default: 'aws/lambda/2175051-cfntest-lggr'
   ResourceName:
     Description: 'テスト用'
     Type: String
-    Default: '2175051-cfntest-lggr'
+    Default: '2175051-cfntest-resource'
     
   TargetS3Bacuket:
     Description: 'KDFターゲットS3バケット'
@@ -58,7 +61,7 @@ Resources:
         NestAwsAccount: !Sub ${AwsAccount}
         NestSubscriptionFilterRole: !Sub ${SubscriptionFilterRole}
         NestKDFCommonRole: !Sub ${KDFCommonRole}
-        LogGroupName: !Sub ${ResourceName}
+        LogGroupName: !Sub ${LogGroupName}
         NestTargetS3Bacuket: !Sub ${TargetS3Bacuket}
         
   SGStack:
