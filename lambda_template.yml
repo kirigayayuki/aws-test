@@ -1,0 +1,76 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+
+Parameters:
+  AwsAccount:
+    Description: 'AWSアカウント番号'
+    Type: String
+
+  PrivateSubnet1:
+    Description: 'プライベートサブネット1'
+    Type: String
+
+  PrivateSubnet2:
+    Description: 'プライベートサブネット2'
+    Type: String
+
+  LambdaCommonRole:
+    Description: 'Lambda共通IAMロール'
+    Type: String
+    
+  LambdaFunctionName1:
+    Description: 'テスト用Lambda'
+    Type: String
+
+  LambdaLayerName2:
+    Description: 'openpyxl用レイヤー'
+    Type: String
+
+
+Resources:
+  ###################################################
+  # Lambda Function
+  ###################################################
+  LambdaLayer2:
+    Type: "AWS::Serverless::LayerVersion"
+    Properties:
+      LayerName: !Sub ${LambdaLayerName2}
+      Description: !Sub ${LambdaLayerName2}
+      CompatibleArchitectures: 
+        - x86_64
+      CompatibleRuntimes: 
+        - python3.11
+      ContentUri: layer/openpyxl
+      
+  LambdaFunction1:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${LambdaFunctionName1}
+      CodeUri: functions/task1/
+      Handler: lambda_function.lambda_handler
+      Role: !Sub arn:aws:iam::${AwsAccount}:role/${LambdaCommonRole}
+      Runtime: python3.11
+      Architectures: 
+        - x86_64
+      MemorySize: 128
+      EphemeralStorage:
+        Size: 512
+      Timeout: 30
+      VpcConfig: 
+        SecurityGroupIds:
+          - {Fn::ImportValue: test-sg-id}
+        SubnetIds:
+          - !Sub ${PrivateSubnet1}
+          - !Sub ${PrivateSubnet2}
+      LoggingConfig:
+        LogFormat: JSON
+        LogGroup: {Fn::ImportValue: test-loggourp-name}
+      Tags: 
+        Name: !Sub ${LambdaFunctionName1}
+      Layers: 
+        - !Ref LambdaLayer2
+      Environment: 
+        Variables:
+          KeyName1: Value1
+          KeyName2: Value2

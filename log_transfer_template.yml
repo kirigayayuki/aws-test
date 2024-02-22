@@ -74,3 +74,14 @@ Resources:
       Tags: 
         - Key: Name
           Value: !Sub ${NestResourceName}-delivery-stream
+          
+          
+Outputs:
+  LogGroupName:
+    Value: !Ref TestLogGroup
+    Export:
+      Name: test-loggourp-name
+  KDFARN:
+    Value: !GetAtt TestKDF.Arn
+    Export:
+      Name: test-kdf-arn

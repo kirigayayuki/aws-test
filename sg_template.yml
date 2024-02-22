@@ -73,3 +73,10 @@ Resources:
 #          FromPort: !Sub ${SgIngFromPort2}
 #          IpProtocol: tcp
 #          ToPort: !Sub ${SgIngFromPort2}
+
+Outputs:
+  SGID:
+    Value: !GetAtt TestSG.GroupId
+    Export:
+      Name: test-sg-id
+
