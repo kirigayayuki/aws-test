@@ -22,7 +22,7 @@ Parameters:
   LogGroupName:
     Description: 'テスト用Lambda'
     Type: String
-    Default: '2175051-cfntest-lggr'
+    Default: 'aws/lambda/2175051-cfntest-lggr'
   NestTargetS3Bacuket:
     Description: 'KDFターゲットS3バケット'
     Type: String
