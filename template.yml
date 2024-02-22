@@ -61,7 +61,6 @@ Resources:
         LogGroupName: !Sub aws/testlog/${ResourceName}
         NestTargetS3Bacuket: !Sub ${TargetS3Bacuket}
         
-Resources:
   SGStack:
     Type: AWS::Serverless::Application
     Properties:
