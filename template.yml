@@ -19,10 +19,6 @@ Parameters:
     Description: 'テスト用Lambda'
     Type: String
     Default: '2175051-cfntest-resource'
-  LogGroupName:
-    Description: 'テスト用Lambda'
-    Type: String
-    Default: 'aws/lambda/2175051-cfntest-lggr'
   NestTargetS3Bacuket:
     Description: 'KDFターゲットS3バケット'
     Type: String
@@ -35,11 +31,11 @@ Resources:
   TestLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub ${LogGroupName}
+      LogGroupName: !Join [ "", [/aws/lambda/, !Ref NestResourceName ]]
       RetentionInDays: 7
       Tags: 
         - Key: Name
-          Value: !Sub ${LogGroupName}
+          Value: !Join [ "", [/aws/lambda/, !Ref NestResourceName ]]
 
   TestSubscriptionFilter:
     Type: AWS::Logs::SubscriptionFilter
