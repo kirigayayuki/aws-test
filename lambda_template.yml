@@ -1,7 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Transform:
-  - AWS::LanguageExtensions
-  - AWS::Serverless-2016-10-31
+Transform: AWS::Serverless-2016-10-31
 
 
 Parameters:
@@ -29,11 +27,6 @@ Parameters:
     Description: 'openpyxl用レイヤー'
     Type: String
 
-  DirPass:
-    Description: 'pass'
-    Type: String
-    Default: 'functions/task1/'
-
 Resources:
   ###################################################
   # Lambda Function
@@ -53,7 +46,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: !Sub ${LambdaFunctionName1}
-      CodeUri: !Ref DirPass
+      CodeUri: functions/task1/
       Handler: lambda_function.lambda_handler
       Role: !Sub arn:aws:iam::${AwsAccount}:role/${LambdaCommonRole}
       Runtime: python3.11
