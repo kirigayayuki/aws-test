@@ -99,3 +99,6 @@ Resources:
         PrivateSubnet1: !Sub ${PrivateSubnet1}
         PrivateSubnet2: !Sub ${PrivateSubnet2}
         LambdaCommonRole: !Sub ${LambdaCommonRole}
+    DependsOn: 
+      - SGStack
+      - LogTransferStack
