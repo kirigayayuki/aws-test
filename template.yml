@@ -26,6 +26,27 @@ Parameters:
     Description: 'KDFターゲットS3バケット'
     Type: String
     Default: 'arn:aws:s3:::2175051-sf-cicd-test-bucket'
+    
+  VPCID:
+    Description: 'VPCID'
+    Type: String
+    Default: 'vpc-0d8f5785aec76fd74'
+  SgIngCidrIp1:
+    Description: 'SgIngCidrIp1'
+    Type: String
+    Default: '192.168.0.1/32'
+  SgIngFromPort1:
+    Description: 'SgIngFromPort1'
+    Type: String
+    Default: '22'
+  SgIngCidrIp2:
+    Description: 'SgIngCidrIp2'
+    Type: String
+    Default: '192.168.0.2/32'
+  SgIngFromPort2:
+    Description: 'SgIngFromPort2'
+    Type: String
+    Default: '443'
 
 Resources:
   LogTransferStack:
@@ -33,12 +54,25 @@ Resources:
     Properties:
       Location: ./log_transfer_template.yml
       Parameters:
+        NestResourceName: !Sub ${ResourceName}
         NestAwsAccount: !Sub ${AwsAccount}
         NestSubscriptionFilterRole: !Sub ${SubscriptionFilterRole}
         NestKDFCommonRole: !Sub ${KDFCommonRole}
-        NestResourceName: !Sub ${ResourceName}
-        LogGroupName: !Sub ${ResourceName}
+        LogGroupName: !Sub aws/testlog/${ResourceName}
         NestTargetS3Bacuket: !Sub ${TargetS3Bacuket}
+        
+Resources:
+  SGStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: ./sg_template.yml
+      Parameters:
+        NestResourceName: !Sub ${ResourceName}
+        VPCID: !Sub ${VPCID}
+        SgIngCidrIp1: !Sub ${SgIngCidrIp1}
+        SgIngFromPort1: !Sub ${SgIngFromPort1}
+        SgIngCidrIp2: !Sub ${SgIngCidrIp2}
+        SgIngFromPort2: !Sub ${SgIngFromPort2}
         
 #  LambdaStack:
 #    Type: AWS::CloudFormation::Stack

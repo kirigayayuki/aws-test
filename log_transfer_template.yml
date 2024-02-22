@@ -29,7 +29,7 @@ Parameters:
 
 Resources:
   ###################################################
-  # Lambda Function
+  # Log Transfer
   ###################################################
   #Lambda用ロググループ
   TestLogGroup:
