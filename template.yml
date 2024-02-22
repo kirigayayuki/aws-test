@@ -58,7 +58,7 @@ Resources:
         NestAwsAccount: !Sub ${AwsAccount}
         NestSubscriptionFilterRole: !Sub ${SubscriptionFilterRole}
         NestKDFCommonRole: !Sub ${KDFCommonRole}
-        LogGroupName: !Sub aws/testlog/${ResourceName}
+        LogGroupName: !Sub ${ResourceName}
         NestTargetS3Bacuket: !Sub ${TargetS3Bacuket}
         
   SGStack:
