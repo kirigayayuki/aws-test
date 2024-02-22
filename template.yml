@@ -19,7 +19,7 @@ Parameters:
   LogGroupName:
     Description: 'テスト用'
     Type: String
-    Default: 'aws/lambda/2175051-cfntest-lggr'
+    Default: '2175051-cfntest-lggr'
   ResourceName:
     Description: 'テスト用'
     Type: String

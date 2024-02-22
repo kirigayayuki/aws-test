@@ -35,7 +35,7 @@ Resources:
   TestLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub ${LogGroupName}
+      LogGroupName: !Sub aws/lambda/${LogGroupName}
       RetentionInDays: 7
       Tags: 
         - Key: Name
