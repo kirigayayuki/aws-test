@@ -3,84 +3,74 @@ Transform: AWS::Serverless-2016-10-31
 
 
 Parameters:
-  AwsAccount:
+  NestAwsAccount:
     Description: 'AWSアカウント番号'
     Type: String
     Default: '477460359712'
-
-  SubscriptionFilterRole:
+  NestSubscriptionFilterRole:
     Description: 'サブスクリプションフィルタ用IAMロール'
     Type: String
     Default: '2175051-cwltofirehose-role'
-  KDFCommonRole:
+  NestKDFCommonRole:
     Description: 'KDF用IAMロール'
     Type: String
     Default: '2175051-firehosetos3-role'
-  LogGroupName:
-    Description: 'テスト用'
-    Type: String
-    Default: '2175051-cfntest-lggr'
-  ResourceName:
-    Description: 'テスト用'
+  NestResourceName:
+    Description: 'テスト用Lambda'
     Type: String
     Default: '2175051-cfntest-resource'
-    
-  TargetS3Bacuket:
+  LogGroupName:
+    Description: 'テスト用Lambda'
+    Type: String
+    Default: '2175051-cfntest-lggr'
+  NestTargetS3Bacuket:
     Description: 'KDFターゲットS3バケット'
     Type: String
     Default: 'arn:aws:s3:::2175051-sf-cicd-test-bucket'
-    
-  VPCID:
-    Description: 'VPCID'
-    Type: String
-    Default: 'vpc-0d8f5785aec76fd74'
-  SgIngCidrIp1:
-    Description: 'SgIngCidrIp1'
-    Type: String
-    Default: '192.168.0.1/32'
-  SgIngFromPort1:
-    Description: 'SgIngFromPort1'
-    Type: String
-    Default: '22'
-  SgIngCidrIp2:
-    Description: 'SgIngCidrIp2'
-    Type: String
-    Default: '192.168.0.2/32'
-  SgIngFromPort2:
-    Description: 'SgIngFromPort2'
-    Type: String
-    Default: '443'
-
 Resources:
-  LogTransferStack:
-    Type: AWS::Serverless::Application
+  ###################################################
+  # Log Transfer
+  ###################################################
+  #Lambda用ロググループ
+  TestLogGroup:
+    Type: AWS::Logs::LogGroup
     Properties:
-      Location: ./log_transfer_template.yml
-      Parameters:
-        NestResourceName: !Sub ${ResourceName}
-        NestAwsAccount: !Sub ${AwsAccount}
-        NestSubscriptionFilterRole: !Sub ${SubscriptionFilterRole}
-        NestKDFCommonRole: !Sub ${KDFCommonRole}
-        LogGroupName: !Sub ${LogGroupName}
-        NestTargetS3Bacuket: !Sub ${TargetS3Bacuket}
-        
-  SGStack:
-    Type: AWS::Serverless::Application
-    Properties:
-      Location: ./sg_template.yml
-      Parameters:
-        NestResourceName: !Sub ${ResourceName}
-        VPCID: !Sub ${VPCID}
-        SgIngCidrIp1: !Sub ${SgIngCidrIp1}
-        SgIngFromPort1: !Sub ${SgIngFromPort1}
-        SgIngCidrIp2: !Sub ${SgIngCidrIp2}
-        SgIngFromPort2: !Sub ${SgIngFromPort2}
-        
-#  LambdaStack:
-#    Type: AWS::CloudFormation::Stack
-#    Properties:
-#      TemplateURL: ./lambda_template.yaml
-#      Parameters:
-#        NestVPCRange: !Ref VPCRange
-#        NestSubnetRange1: !Ref SubnetRange1
+      LogGroupName: !Sub ${LogGroupName}
+      RetentionInDays: 7
+      Tags: 
+        - Key: Name
+          Value: !Sub ${LogGroupName}
 
+  TestSubscriptionFilter:
+    Type: AWS::Logs::SubscriptionFilter
+    Properties:
+      DestinationArn: !GetAtt TestKDF.Arn
+      Distribution: Random
+      FilterName: !Sub ${NestResourceName}-subscription-s3-filter
+      FilterPattern: ''
+      LogGroupName: !Ref TestLogGroup
+      RoleArn: !Sub arn:aws:iam::${NestAwsAccount}:role/${NestSubscriptionFilterRole}
+      
+  TestKDF:
+    Type: AWS::KinesisFirehose::DeliveryStream
+    Properties:
+      DeliveryStreamName: !Sub ${NestResourceName}-delivery-stream
+      DeliveryStreamType: DirectPut
+      ExtendedS3DestinationConfiguration: 
+        BucketARN: !Sub ${NestTargetS3Bacuket}
+        BufferingHints:
+          IntervalInSeconds: '60'
+          SizeInMBs: '50'
+        RoleARN: !Sub arn:aws:iam::${NestAwsAccount}:role/${NestKDFCommonRole}
+        CloudWatchLoggingOptions:
+          Enabled: true
+          LogGroupName: !Sub '/aws/kinesisfirehose/${NestResourceName}-delivery-stream'
+          LogStreamName: S3Delivery
+        CompressionFormat:  GZIP
+        EncryptionConfiguration:
+          NoEncryptionConfig: NoEncryption
+        ErrorOutputPrefix: !Sub 'logs/error/${NestResourceName}'
+        Prefix: !Sub 'logs/info/${NestResourceName}'
+      Tags: 
+        - Key: Name
+          Value: !Sub ${NestResourceName}-delivery-stream
