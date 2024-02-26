@@ -21,20 +21,20 @@ Parameters:
 #    Type: String
 #    Default: 'arn:aws:s3:::2175051-sf-cicd-test-bucket'
     
-  ResourceList:
-    Type: List<String>
-    Default: 2175051-CFnLoopTest-A,2175051-CFnLoopTest-B,2175051-CFnLoopTest-C
+#  ResourceList:
+#    Type: List<String>
+#    Default: 2175051-CFnLoopTest-A,2175051-CFnLoopTest-B,2175051-CFnLoopTest-C
     
     
 Mappings: 
   LggrMappings: 
-    2175051-CFnLoopTest-A: 
+    TestA: 
       ResourceName: "2175051-CFnLoopTest-A"
       LogGroupName: "2175051-CFnLoopTest-A-lggr"
-    2175051-CFnLoopTest-B: 
+    TestB: 
       ResourceName: "2175051-CFnLoopTest-B"
       LogGroupName: "2175051-CFnLoopTest-B-lggr"
-    2175051-CFnLoopTest-C: 
+    TestC: 
       ResourceName: "2175051-CFnLoopTest-C"
       LogGroupName: "2175051-CFnLoopTest-C-lggr"
       
@@ -45,7 +45,7 @@ Resources:
   #Lambda用ロググループ
   Fn::ForEach::LggrLoop:
   - lggrItems
-  - !Ref ResourceList
+  - [TestA, TestB, TestC]
   - ${lggrItems}:
       Type: AWS::Logs::LogGroup
       Properties:
