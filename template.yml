@@ -48,20 +48,20 @@ Resources:
   ###################################################
   #Lambda用ロググループ
   'Fn::ForEach::Lggrloops':
-  - Lggritems
-  - - Testloggrname1
-  - - Testloggrname2
-  - '${Lggritems}':
+    - Lggritems
+    - - Testloggrname1
+    - - Testloggrname2
+    - '${Lggritems}':
 #  TestLoggr:
-      Type: AWS::Logs::LogGroup
-      Properties:
-        LogGroupName: 'TestLoggrName'
+        Type: AWS::Logs::LogGroup
+        Properties:
+          LogGroupName: 'TestLoggrName'
 #        LogGroupName: !FindInMap
 #          - LggrMappings
 #        - !Ref lggrItems
 #          - TestA
 #          - LogGroupName
-      RetentionInDays: 7
+#      RetentionInDays: 7
 #        Tags: 
 #          - Key: Name
 #            Value: !FindInMap
