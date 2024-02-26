@@ -50,13 +50,13 @@ Resources:
   #Lambda用ロググループ
   'Fn::ForEach::Lggrloops':
     - Lggritems
-    - - Testloggrname1
-    - - Testloggrname2
+    - [InstanceA, InstanceB, InstanceC]
     - '${Lggritems}':
 #  TestLoggr:
         Type: AWS::Logs::LogGroup
         Properties:
-          LogGroupName: !Ref Lggritems
+          LogGroupName: TestLggrName
+#          LogGroupName: !Ref Lggritems
 #        LogGroupName: !FindInMap
 #          - LggrMappings
 #        - !Ref lggrItems
