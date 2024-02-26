@@ -48,14 +48,14 @@ Resources:
 #  - [TestA, TestB, TestC]
 #  - ${lggrItems}:
   TestLoggr
-      Type: AWS::Logs::LogGroup
-      Properties:
-        LogGroupName: !FindInMap
-          - LggrMappings
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !FindInMap
+        - LggrMappings
 #          - !Ref lggrItems
-          - TestA
-          - LogGroupName
-        RetentionInDays: 7
+        - TestA
+        - LogGroupName
+      RetentionInDays: 7
 #        Tags: 
 #          - Key: Name
 #            Value: !FindInMap
