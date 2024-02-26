@@ -49,12 +49,12 @@ Resources:
   #Lambda用ロググループ
   'Fn::ForEach::Lggrloops':
   - Lggritems
-  - [TestA, TestB, TestC]
+  - - Testloggrname
   - '${Lggritems}':
 #  TestLoggr:
       Type: AWS::Logs::LogGroup
       Properties:
-        LogGroupName: !Sub ${LogGroupName}
+        LogGroupName: !Sub ${Lggritems}
 #        LogGroupName: !FindInMap
 #          - LggrMappings
 #        - !Ref lggrItems
