@@ -55,7 +55,7 @@ Resources:
 #  TestLoggr:
       Type: AWS::Logs::LogGroup
       Properties:
-        LogGroupName: !Sub ${Lggritems}
+        LogGroupName: 'TestLoggrName'
 #        LogGroupName: !FindInMap
 #          - LggrMappings
 #        - !Ref lggrItems
