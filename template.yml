@@ -3,102 +3,104 @@ Transform: AWS::Serverless-2016-10-31
 
 
 Parameters:
-  AwsAccount:
-    Description: 'AWSアカウント番号'
-    Type: String
-    Default: '477460359712'
-  PrivateSubnet1:
-    Description: 'プライベートサブネット1'
-    Type: String
-    Default: 'subnet-08b3b53b973fe0d23'
-  PrivateSubnet2:
-    Description: 'プライベートサブネット2'
-    Type: String
-    Default: 'subnet-08505629ae83788fc'
-  LambdaCommonRole:
-    Description: 'Lambda共通IAMロール'
-    Type: String
-    Default: '2175051_lambda-common-role'
-  SubscriptionFilterRole:
-    Description: 'サブスクリプションフィルタ用IAMロール'
-    Type: String
-    Default: '2175051-cwltofirehose-role'
-  KDFCommonRole:
-    Description: 'KDF用IAMロール'
-    Type: String
-    Default: '2175051-firehosetos3-role'
+#  AwsAccount:
+#    Description: 'AWSアカウント番号'
+#    Type: String
+#    Default: '477460359712'
+#  SubscriptionFilterRole:
+#    Description: 'サブスクリプションフィルタ用IAMロール'
+#    Type: String
+#    Default: '2175051-cwltofirehose-role'
+#  KDFCommonRole:
+#    Description: 'KDF用IAMロール'
+#    Type: String
+#    Default: '2175051-firehosetos3-role'
+#  TargetS3Bacuket:
+#    Description: 'KDFターゲットS3バケット'
+#    Type: String
+#    Default: 'arn:aws:s3:::2175051-sf-cicd-test-bucket'
     
-  LambdaFunctionName1:
-    Description: 'テスト用Lambda'
-    Type: String
-    Default: '2175051-cfntest-lambda01'
-  LambdaLayerName2:
-    Description: 'openpyxl用レイヤー'
-    Type: String
-    Default: 'openpyxl'
+  ResourceList:
+    Type: List<String>
+    Default: 2175051-CFnLoopTest-A,2175051-CFnLoopTest-B,2175051-CFnLoopTest-C
     
-  TargetS3Bacuket:
-    Description: 'KDFターゲットS3バケット'
-    Type: String
-    Default: 'arn:aws:s3:::2175051-sf-cicd-test-bucket'
     
-  VPCID:
-    Description: 'VPCID'
-    Type: String
-    Default: 'vpc-0d8f5785aec76fd74'
-  SgIngCidrIp1:
-    Description: 'SgIngCidrIp1'
-    Type: String
-    Default: '192.168.0.1/32'
-  SgIngFromPort1:
-    Description: 'SgIngFromPort1'
-    Type: String
-    Default: '22'
-  SgIngCidrIp2:
-    Description: 'SgIngCidrIp2'
-    Type: String
-    Default: '192.168.0.2/32'
-  SgIngFromPort2:
-    Description: 'SgIngFromPort2'
-    Type: String
-    Default: '443'
-
+Mappings: 
+  LggrMappings: 
+    2175051-CFnLoopTest-A: 
+      ResourceName: "2175051-CFnLoopTest-A"
+      LogGroupName: "2175051-CFnLoopTest-A-lggr"
+    2175051-CFnLoopTest-B: 
+      ResourceName: "2175051-CFnLoopTest-B"
+      LogGroupName: "2175051-CFnLoopTest-B-lggr"
+    2175051-CFnLoopTest-C: 
+      ResourceName: "2175051-CFnLoopTest-C"
+      LogGroupName: "2175051-CFnLoopTest-C-lggr"
+      
 Resources:
-  LogTransferStack:
-    Type: AWS::Serverless::Application
+  ###################################################
+  # Log Transfer
+  ###################################################
+  #Lambda用ロググループ
+  Fn::ForEach::LggrLoop:
+    - lggrItems
+    - !Ref ResourceList
+    - ${lggrItems}:
+    Type: AWS::Logs::LogGroup
     Properties:
-      Location: ./log_transfer_template.yml
-      Parameters:
-        NestResourceName: !Sub ${LambdaFunctionName1}
-        NestAwsAccount: !Sub ${AwsAccount}
-        NestSubscriptionFilterRole: !Sub ${SubscriptionFilterRole}
-        NestKDFCommonRole: !Sub ${KDFCommonRole}
-        LogGroupName: !Join [ "", [/aws/lambda/, !Ref LambdaFunctionName1 ]]
-        NestTargetS3Bacuket: !Sub ${TargetS3Bacuket}
-        
-  SGStack:
-    Type: AWS::Serverless::Application
-    Properties:
-      Location: ./sg_template.yml
-      Parameters:
-        NestResourceName: !Sub ${LambdaFunctionName1}
-        VPCID: !Sub ${VPCID}
-        SgIngCidrIp1: !Sub ${SgIngCidrIp1}
-        SgIngFromPort1: !Sub ${SgIngFromPort1}
-        SgIngCidrIp2: !Sub ${SgIngCidrIp2}
-        SgIngFromPort2: !Sub ${SgIngFromPort2}
-        
-  LambdaStack:
-    Type: AWS::Serverless::Application
-    Properties:
-      Location: ./lambda_template.yml
-      Parameters:
-        LambdaFunctionName1: !Sub ${LambdaFunctionName1}
-        LambdaLayerName2: !Sub ${LambdaLayerName2}
-        AwsAccount: !Sub ${AwsAccount}
-        PrivateSubnet1: !Sub ${PrivateSubnet1}
-        PrivateSubnet2: !Sub ${PrivateSubnet2}
-        LambdaCommonRole: !Sub ${LambdaCommonRole}
-    DependsOn: 
-      - SGStack
-      - LogTransferStack
+      LogGroupName: !FindInMap
+            - LggrMappings
+            - !Ref lggrItems
+            - LogGroupName
+      RetentionInDays: 7
+      Tags: 
+        - Key: Name
+          Value: !FindInMap
+            - LggrMappings
+            - !Ref lggrItems
+            - ResourceName
+
+#  TestSubscriptionFilter:
+#    Type: AWS::Logs::SubscriptionFilter
+#    Properties:
+#      DestinationArn: !GetAtt TestKDF.Arn
+#      Distribution: Random
+#      FilterName: !Sub ${ResourceName}-subscription-s3-filter
+#      FilterPattern: ''
+#      LogGroupName: !Ref TestLogGroup
+#      RoleArn: !Sub arn:aws:iam::${AwsAccount}:role/${SubscriptionFilterRole}
+      
+#  TestKDF:
+#    Type: AWS::KinesisFirehose::DeliveryStream
+#    Properties:
+#      DeliveryStreamName: !Sub ${ResourceName}-delivery-stream
+#      DeliveryStreamType: DirectPut
+#      ExtendedS3DestinationConfiguration: 
+#        BucketARN: !Sub ${TargetS3Bacuket}
+#        BufferingHints:
+#          IntervalInSeconds: '60'
+#          SizeInMBs: '50'
+#        RoleARN: !Sub arn:aws:iam::${AwsAccount}:role/${KDFCommonRole}
+#        CloudWatchLoggingOptions:
+#          Enabled: true
+#          LogGroupName: !Sub '/aws/kinesisfirehose/${ResourceName}-delivery-stream'
+#          LogStreamName: S3Delivery
+#        CompressionFormat:  GZIP
+#        EncryptionConfiguration:
+#          NoEncryptionConfig: NoEncryption
+#        ErrorOutputPrefix: !Sub 'logs/error/${ResourceName}'
+#        Prefix: !Sub 'logs/info/${ResourceName}'
+#      Tags: 
+#        - Key: Name
+#          Value: !Sub ${ResourceName}-delivery-stream
+          
+          
+#Outputs:
+#  LogGroupName:
+#    Value: !Ref TestLogGroup
+#    Export:
+#      Name: test-loggourp-name
+#  KDFARN:
+#    Value: !GetAtt TestKDF.Arn
+#    Export:
+#      Name: test-kdf-arn
