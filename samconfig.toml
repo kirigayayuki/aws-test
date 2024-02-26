@@ -1,6 +1,6 @@
 version = 0.1
 [default.deploy.parameters]
-stack_name = "sam-deploy-test"
+stack_name = "sam-2175051-deploy-loop-test"
 s3_bucket = "2175051-sf-cicd-test-bucket"
 s3_prefix = "sam"
 region = "ap-northeast-1"
