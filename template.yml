@@ -53,9 +53,9 @@ Resources:
     - [InstanceA, InstanceB, InstanceC]
     - '${Lggritems}':
 #  TestLoggr:
-        Type: AWS::Logs::LogGroup
+        Type: 'AWS::Logs::LogGroup'
         Properties:
-          LogGroupName: TestLggrName
+          LogGroupName: 'TestLggrName'
 #          LogGroupName: !Ref Lggritems
 #        LogGroupName: !FindInMap
 #          - LggrMappings
