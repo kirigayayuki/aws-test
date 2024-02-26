@@ -3,7 +3,7 @@ Transform: 'AWS::LanguageExtensions'
 Transform: AWS::Serverless-2016-10-31
 
 
-Parameters:
+#Parameters:
 #  AwsAccount:
 #    Description: 'AWSアカウント番号'
 #    Type: String
@@ -20,10 +20,10 @@ Parameters:
 #    Description: 'KDFターゲットS3バケット'
 #    Type: String
 #    Default: 'arn:aws:s3:::2175051-sf-cicd-test-bucket'
-  LogGroupName:
-    Description: 'リソース名'
-    Type: String
-    Default: 'cfntest-2175051-lggr'
+#  TestLggrName:
+#    Description: 'リソース名'
+#    Type: String
+#    Default: 'cfntest-2175051-lggr'
 
 #  ResourceList:
 #    Type: List<String>
@@ -49,7 +49,8 @@ Resources:
   #Lambda用ロググループ
   'Fn::ForEach::Lggrloops':
   - Lggritems
-  - - Testloggrname
+  - - Testloggrname1
+  - - Testloggrname2
   - '${Lggritems}':
 #  TestLoggr:
       Type: AWS::Logs::LogGroup
