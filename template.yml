@@ -3,7 +3,7 @@ Transform: AWS::Serverless-2016-10-31
 Transform: 'AWS::LanguageExtensions'
 
 
-Parameters:
+#Parameters:
 #  AwsAccount:
 #    Description: 'AWSアカウント番号'
 #    Type: String
