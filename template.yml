@@ -44,22 +44,22 @@ Resources:
   ###################################################
   #Lambda用ロググループ
   Fn::ForEach::LggrLoop:
-    - lggrItems
-    - !Ref ResourceList
-    - ${lggrItems}:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      LogGroupName: !FindInMap
-            - LggrMappings
-            - !Ref lggrItems
-            - LogGroupName
-      RetentionInDays: 7
-      Tags: 
-        - Key: Name
-          Value: !FindInMap
-            - LggrMappings
-            - !Ref lggrItems
-            - ResourceName
+  - lggrItems
+  - !Ref ResourceList
+  - ${lggrItems}:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        LogGroupName: !FindInMap
+              - LggrMappings
+              - !Ref lggrItems
+              - LogGroupName
+        RetentionInDays: 7
+        Tags: 
+          - Key: Name
+            Value: !FindInMap
+              - LggrMappings
+              - !Ref lggrItems
+              - ResourceName
 
 #  TestSubscriptionFilter:
 #    Type: AWS::Logs::SubscriptionFilter
