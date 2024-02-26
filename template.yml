@@ -50,16 +50,16 @@ Resources:
       Type: AWS::Logs::LogGroup
       Properties:
         LogGroupName: !FindInMap
-              - LggrMappings
-              - !Ref lggrItems
-              - LogGroupName
+            - LggrMappings
+            - !Ref lggrItems
+            - LogGroupName
         RetentionInDays: 7
         Tags: 
           - Key: Name
             Value: !FindInMap
-              - LggrMappings
-              - !Ref lggrItems
-              - ResourceName
+                - LggrMappings
+                - !Ref lggrItems
+                - ResourceName
 
 #  TestSubscriptionFilter:
 #    Type: AWS::Logs::SubscriptionFilter
