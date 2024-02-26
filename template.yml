@@ -43,17 +43,17 @@ Resources:
   # Log Transfer
   ###################################################
   #Lambda用ロググループ
-  Fn::ForEach::LggrLoop:
-  - lggrItems
+  'Fn::ForEach::Lggrloops':
+  - Lggritems
   - [TestA, TestB, TestC]
-  - ${lggrItems}:
+  - '${Lggritems}':
 #  TestLoggr:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !FindInMap
         - LggrMappings
-        - !Ref lggrItems
-#        - TestA
+#        - !Ref lggrItems
+        - TestA
         - LogGroupName
       RetentionInDays: 7
 #        Tags: 
