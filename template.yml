@@ -3,7 +3,7 @@ Transform: AWS::Serverless-2016-10-31
 Transform: 'AWS::LanguageExtensions'
 
 
-#Parameters:
+Parameters:
 #  AwsAccount:
 #    Description: 'AWSアカウント番号'
 #    Type: String
@@ -20,23 +20,27 @@ Transform: 'AWS::LanguageExtensions'
 #    Description: 'KDFターゲットS3バケット'
 #    Type: String
 #    Default: 'arn:aws:s3:::2175051-sf-cicd-test-bucket'
-    
+  LogGroupName:
+    Description: 'リソース名'
+    Type: String
+    Default: 'cfntest-2175051-lggr'
+
 #  ResourceList:
 #    Type: List<String>
 #    Default: '2175051-CFnLoopTest-A,2175051-CFnLoopTest-B,2175051-CFnLoopTest-C'
     
     
-Mappings: 
-  LggrMappings: 
-    TestA: 
+#Mappings: 
+#  LggrMappings: 
+#    TestA: 
 #      ResourceName: "2175051-CFnLoopTest-A"
-      LogGroupName: "2175051-CFnLoopTest-A-lggr"
-    TestB: 
+#      LogGroupName: "2175051-CFnLoopTest-A-lggr"
+#    TestB: 
 #      ResourceName: "2175051-CFnLoopTest-B"
-      LogGroupName: "2175051-CFnLoopTest-B-lggr"
-    TestC: 
+#      LogGroupName: "2175051-CFnLoopTest-B-lggr"
+#    TestC: 
 #      ResourceName: "2175051-CFnLoopTest-C"
-      LogGroupName: "2175051-CFnLoopTest-C-lggr"
+#      LogGroupName: "2175051-CFnLoopTest-C-lggr"
       
 Resources:
   ###################################################
@@ -48,13 +52,14 @@ Resources:
   - [TestA, TestB, TestC]
   - '${Lggritems}':
 #  TestLoggr:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      LogGroupName: !FindInMap
-        - LggrMappings
+      Type: AWS::Logs::LogGroup
+      Properties:
+        LogGroupName: !Sub ${LogGroupName}
+#        LogGroupName: !FindInMap
+#          - LggrMappings
 #        - !Ref lggrItems
-        - TestA
-        - LogGroupName
+#          - TestA
+#          - LogGroupName
       RetentionInDays: 7
 #        Tags: 
 #          - Key: Name
