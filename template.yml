@@ -47,7 +47,7 @@ Resources:
 #  - lggrItems
 #  - [TestA, TestB, TestC]
 #  - ${lggrItems}:
-  TestLoggr
+  TestLoggr:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !FindInMap
