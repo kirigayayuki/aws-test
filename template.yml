@@ -4,44 +4,40 @@ Transform:
   - AWS::Serverless-2016-10-31
 
 
-#Parameters:
-#  AwsAccount:
-#    Description: 'AWSアカウント番号'
-#    Type: String
-#    Default: '477460359712'
-#  SubscriptionFilterRole:
-#    Description: 'サブスクリプションフィルタ用IAMロール'
-#    Type: String
-#    Default: '2175051-cwltofirehose-role'
-#  KDFCommonRole:
-#    Description: 'KDF用IAMロール'
-#    Type: String
-#    Default: '2175051-firehosetos3-role'
-#  TargetS3Bacuket:
-#    Description: 'KDFターゲットS3バケット'
-#    Type: String
-#    Default: 'arn:aws:s3:::2175051-sf-cicd-test-bucket'
+Parameters:
+  AwsAccount:
+    Description: 'AWSアカウント番号'
+    Type: String
+    Default: '477460359712'
+  SubscriptionFilterRole:
+    Description: 'サブスクリプションフィルタ用IAMロール'
+    Type: String
+    Default: '2175051-cwltofirehose-role'
+  KDFCommonRole:
+    Description: 'KDF用IAMロール'
+    Type: String
+    Default: '2175051-firehosetos3-role'
+  TargetS3Bacuket:
+    Description: 'KDFターゲットS3バケット'
+    Type: String
+    Default: 'arn:aws:s3:::2175051-sf-cicd-test-bucket'
 #  TestLggrName:
 #    Description: 'リソース名'
 #    Type: String
 #    Default: 'cfntest-2175051-lggr'
 
-#  ResourceList:
-#    Type: List<String>
-#    Default: '2175051-CFnLoopTest-A,2175051-CFnLoopTest-B,2175051-CFnLoopTest-C'
+  ResourceList:
+    Type: List<String>
+    Default: 'TestA,TestB,TestC'
     
-    
-#Mappings: 
-#  LggrMappings: 
-#    TestA: 
-#      ResourceName: "2175051-CFnLoopTest-A"
-#      LogGroupName: "2175051-CFnLoopTest-A-lggr"
-#    TestB: 
-#      ResourceName: "2175051-CFnLoopTest-B"
-#      LogGroupName: "2175051-CFnLoopTest-B-lggr"
-#    TestC: 
-#      ResourceName: "2175051-CFnLoopTest-C"
-#      LogGroupName: "2175051-CFnLoopTest-C-lggr"
+Mappings: 
+  LggrMappings: 
+    TestA: 
+      ResourceName: "2175051-CFnLoopTest-A"
+    TestB: 
+      ResourceName: "2175051-CFnLoopTest-B"
+    TestC: 
+      ResourceName: "2175051-CFnLoopTest-C"
       
 Resources:
   ###################################################
@@ -49,62 +45,78 @@ Resources:
   ###################################################
   #Lambda用ロググループ
   'Fn::ForEach::Lggrloops':
-    - Lggritems
-    - [InstanceLggrA, InstanceLggrB, InstanceLggrC]
-    - '${Lggritems}':
-#  TestLoggr:
+    - Resourceid
+    - !Ref ResourceList
+    - 'LogGroup${Resourceid}':
         Type: 'AWS::Logs::LogGroup'
         Properties:
-#          LogGroupName: 'TestLggrName'
-          LogGroupName: !Ref Lggritems
-#        LogGroupName: !FindInMap
-#          - LggrMappings
-#        - !Ref lggrItems
-#          - TestA
-#          - LogGroupName
-#      RetentionInDays: 7
-#        Tags: 
-#          - Key: Name
-#            Value: !FindInMap
-#              - LggrMappings
-#              - !Ref lggrItems
-#              - ResourceName
-
-#  TestSubscriptionFilter:
-#    Type: AWS::Logs::SubscriptionFilter
-#    Properties:
-#      DestinationArn: !GetAtt TestKDF.Arn
-#      Distribution: Random
-#      FilterName: !Sub ${ResourceName}-subscription-s3-filter
-#      FilterPattern: ''
-#      LogGroupName: !Ref TestLogGroup
-#      RoleArn: !Sub arn:aws:iam::${AwsAccount}:role/${SubscriptionFilterRole}
+          LogGroupName: !FindInMap
+            - LggrMappings
+            - !Ref Resourceid
+            - ResourceName
+          RetentionInDays: 7
+          Tags: 
+            - Key: Name
+              Value: !Sub 
+                - ${ResourceName}-lggr
+                - { ResourceName: !FindInMap [LggrMappings, !Ref Resourceid, ResourceName] }
+                
+  'Fn::ForEach::Subsloops':
+    - Resourceid
+    - !Ref ResourceList
+    - 'SubscriptionFilter${Resourceid}':
+        Type: AWS::Logs::SubscriptionFilter
+        Properties:
+          DestinationArn: !GetAtt [ !Sub DeliveryStream${Resourceid}, Arn]
+          Distribution: Random
+          FilterName: !Sub 
+                - ${ResourceName}-subscription-s3-filter
+                - { ResourceName: !FindInMap [LggrMappings, !Ref Resourceid, ResourceName] }
+          FilterPattern: ''
+          LogGroupName: !Sub LogGroup${Resourceid}
+          RoleArn: !Sub arn:aws:iam::${AwsAccount}:role/${SubscriptionFilterRole}
+        DependsOn: 
+          - !Sub LogGroup${Resourceid}
+          - !Sub DeliveryStream${Resourceid}
+          
       
-#  TestKDF:
-#    Type: AWS::KinesisFirehose::DeliveryStream
-#    Properties:
-#      DeliveryStreamName: !Sub ${ResourceName}-delivery-stream
-#      DeliveryStreamType: DirectPut
-#      ExtendedS3DestinationConfiguration: 
-#        BucketARN: !Sub ${TargetS3Bacuket}
-#        BufferingHints:
-#          IntervalInSeconds: '60'
-#          SizeInMBs: '50'
-#        RoleARN: !Sub arn:aws:iam::${AwsAccount}:role/${KDFCommonRole}
-#        CloudWatchLoggingOptions:
-#          Enabled: true
-#          LogGroupName: !Sub '/aws/kinesisfirehose/${ResourceName}-delivery-stream'
-#          LogStreamName: S3Delivery
-#        CompressionFormat:  GZIP
-#        EncryptionConfiguration:
-#          NoEncryptionConfig: NoEncryption
-#        ErrorOutputPrefix: !Sub 'logs/error/${ResourceName}'
-#        Prefix: !Sub 'logs/info/${ResourceName}'
-#      Tags: 
-#        - Key: Name
-#          Value: !Sub ${ResourceName}-delivery-stream
-          
-          
+  'Fn::ForEach::Kdfloops':
+    - Resourceid
+    - !Ref ResourceList
+    - 'DeliveryStream${Resourceid}':
+        Type: AWS::KinesisFirehose::DeliveryStream
+        Properties:
+          DeliveryStreamName: !Sub 
+                - ${ResourceName}-delivery-stream
+                - { ResourceName: !FindInMap [LggrMappings, !Ref Resourceid, ResourceName] }
+          DeliveryStreamType: DirectPut
+          ExtendedS3DestinationConfiguration: 
+            BucketARN: !Sub ${TargetS3Bacuket}
+            BufferingHints:
+              IntervalInSeconds: '60'
+              SizeInMBs: '50'
+            RoleARN: !Sub arn:aws:iam::${AwsAccount}:role/${KDFCommonRole}
+            CloudWatchLoggingOptions:
+              Enabled: true
+              LogGroupName: !Sub 
+                - '/aws/kinesisfirehose/${ResourceName}-delivery-stream'
+                - { ResourceName: !FindInMap [LggrMappings, !Ref Resourceid, ResourceName] }
+              LogStreamName: S3Delivery
+            CompressionFormat:  GZIP
+            EncryptionConfiguration:
+              NoEncryptionConfig: NoEncryption
+            ErrorOutputPrefix: !Sub 
+                - 'logs/error/${ResourceName}'
+                - { ResourceName: !FindInMap [LggrMappings, !Ref Resourceid, ResourceName] }
+            Prefix: !Sub 
+                - 'logs/info/${ResourceName}'
+                - { ResourceName: !FindInMap [LggrMappings, !Ref Resourceid, ResourceName] }
+          Tags: 
+            - Key: Name
+              Value: !Sub 
+                - ${ResourceName}-delivery-stream
+                - { ResourceName: !FindInMap [LggrMappings, !Ref Resourceid, ResourceName] }
+
 #Outputs:
 #  LogGroupName:
 #    Value: !Ref TestLogGroup
