@@ -67,7 +67,9 @@ Resources:
     - 'SubscriptionFilter${Resourceid}':
         Type: AWS::Logs::SubscriptionFilter
         Properties:
-          DestinationArn: !GetAtt [ !Sub DeliveryStream${Resourceid}, Arn]
+          DestinationArn: !GetAtt
+            - !Sub DeliveryStream${Resourceid}
+            - Arn
           Distribution: Random
           FilterName: !Sub 
                 - ${ResourceName}-subscription-s3-filter
